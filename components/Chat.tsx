@@ -21,12 +21,12 @@ function renderMarkdown(message: string) {
 }
 
 // Fetch Yelp data from our secure API route
-async function fetchYelpResults({ location, keyword }: { location: string; keyword: string }) {
+async function fetchYelpResults({ location, keyword }: { location: string; keyword: string }): Promise<unknown[]> {
   const params = new URLSearchParams({ location, cuisine: keyword }).toString();
   const res = await fetch(`/api/yelp?${params}`);
   if (!res.ok) throw new Error('Failed to fetch Yelp results');
   const data = await res.json();
-  return data.businesses as any[];
+  return data.businesses as unknown[];
 }
 
 // Fetch an AI suggestion from OpenAI via our secure API route
@@ -47,27 +47,12 @@ export default function Chat({ prefs }: { prefs: Prefs }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [dish, setDish] = useState<string | null>(null);
-  const [restaurants, setRestaurants] = useState<any[]>([]);
-  const [yelpLoading, setYelpLoading] = useState(false);
-  const [yelpError, setYelpError] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading, restaurants, yelpLoading]);
-
-  // Fetch Yelp results when dish changes
-  useEffect(() => {
-    if (!dish || !prefs.location) return;
-    setYelpLoading(true);
-    setYelpError('');
-    setRestaurants([]);
-    fetchYelpResults({ location: prefs.location, keyword: dish })
-      .then(setRestaurants)
-      .catch(() => setYelpError('Failed to fetch restaurants.'))
-      .finally(() => setYelpLoading(false));
-  }, [dish, prefs.location]);
+  }, [messages, loading, dish]);
 
   // User sends a message, get AI suggestion, extract dish, and update chat
   const sendMessage = async (e: React.FormEvent) => {

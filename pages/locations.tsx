@@ -167,7 +167,7 @@ export default function LocationsPage() {
       </div>
       {!loading && !error && filteredDishes.length === 0 && (
         <div className="text-center text-gray-500 mt-12">
-          No restaurants found for "{dish}" in {location}.
+          No restaurants found for &quot;{dish}&quot; in {location}.
         </div>
       )}
     </div>

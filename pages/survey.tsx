@@ -25,7 +25,7 @@ export default function Survey() {
       } else {
         setError(data.error || 'Error fetching suggestion');
       }
-    } catch (err) {
+    } catch {
       setError('Error contacting API');
     } finally {
       setLoading(false);
