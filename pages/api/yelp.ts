@@ -3,12 +3,23 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const API_KEY = process.env.YELP_API_KEY;
 const BASE_URL = 'https://api.yelp.com/v3/businesses/search';
 
+interface YelpBusiness {
+  name: string;
+  rating: number;
+  review_count: number;
+  url: string;
+  location: {
+    display_address?: string[];
+    [key: string]: unknown;
+  };
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { location, cuisine, diet } = req.query;
+  const { location, cuisine } = req.query;
 
   if (!location || !cuisine) {
     return res.status(400).json({ error: 'Missing required parameters' });
@@ -40,19 +51,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const data = await yelpRes.json();
-    
     // Format the businesses data to include proper address
-    const formattedBusinesses = (data.businesses || []).map((business: any) => ({
-      name: business.name,
-      rating: business.rating,
-      review_count: business.review_count,
-      url: business.url,
-      address: business.location?.display_address?.join(', ') || 'Address not available',
-      location: business.location
-    }));
-    
+    const formattedBusinesses = (data.businesses || []).map((business: unknown) => {
+      const b = business as YelpBusiness;
+      return {
+        name: b.name,
+        rating: b.rating,
+        review_count: b.review_count,
+        url: b.url,
+        address: b.location?.display_address?.join(', ') || 'Address not available',
+        location: b.location
+      };
+    });
     return res.status(200).json({ businesses: formattedBusinesses });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error('Error calling Yelp API:', err);
     return res.status(500).json({ error: 'Internal server error', details: err instanceof Error ? err.message : 'Unknown error' });
   }

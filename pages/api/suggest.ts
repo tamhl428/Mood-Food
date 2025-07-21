@@ -8,7 +8,7 @@ const openai = new OpenAI({
 // Fallback food suggestions based on feeling
 const getFallbackSuggestion = (feeling: string): string => {
   const feelingSuggestions: { [key: string]: string } = {
-    happy: "Pizza! 🍕 A classic comfort food that's perfect for celebrating good vibes.",
+    happy: "Pizza! 🍕 A classic comfort food that&apos;s perfect for celebrating good vibes.",
     sad: "Chocolate ice cream 🍦 Sweet treats can help lift your spirits.",
     excited: "Sushi! 🍣 Fresh and vibrant flavors to match your energy.",
     tired: "Warm soup 🍜 Something comforting and easy to digest.",
@@ -30,7 +30,13 @@ const getFallbackSuggestion = (feeling: string): string => {
   return "Comfort food like mac and cheese! 🧀 Sometimes the classics are the best choice.";
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+type SuggestResponse = {
+  suggestion?: string;
+  note?: string;
+  error?: string;
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<SuggestResponse>) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -52,18 +58,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const suggestion = completion.choices[0]?.message?.content?.trim() || 'No suggestion available';
 
     res.status(200).json({ suggestion });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('OpenAI Error:', error);
-    
     // Handle quota exceeded error
-    if (error.status === 429 || error.code === 'insufficient_quota') {
-      const fallbackSuggestion = getFallbackSuggestion(feeling);
-      res.status(200).json({ 
-        suggestion: fallbackSuggestion,
-        note: "Using fallback suggestion (OpenAI quota exceeded)"
-      });
-    } else {
-      res.status(500).json({ error: 'OpenAI request failed' });
+    if (typeof error === 'object' && error !== null && ('status' in error || 'code' in error)) {
+      // @ts-expect-error: error may have status or code
+      if (error.status === 429 || error.code === 'insufficient_quota') {
+        const fallbackSuggestion = getFallbackSuggestion(feeling);
+        res.status(200).json({ 
+          suggestion: fallbackSuggestion,
+          note: 'Using fallback suggestion (OpenAI quota exceeded)'
+        });
+        return;
+      }
     }
+    res.status(500).json({ error: 'OpenAI request failed' });
   }
 }
