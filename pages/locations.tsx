@@ -120,7 +120,7 @@ export default function LocationsPage() {
         Restaurants for <span className="text-blue-700">{dish || '...'}</span> in <span className="text-blue-700">{location}</span>
       </h1>
       <div className="text-center text-gray-500 text-sm mb-4">
-        Estimated dish prices are based on the restaurant's price tier and are for reference only.
+        Estimated dish prices are based on the restaurant&apos;s price tier and are for reference only.
       </div>
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

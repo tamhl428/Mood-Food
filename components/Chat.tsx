@@ -20,15 +20,6 @@ function renderMarkdown(message: string) {
   });
 }
 
-// Fetch Yelp data from our secure API route
-async function fetchYelpResults({ location, keyword }: { location: string; keyword: string }): Promise<unknown[]> {
-  const params = new URLSearchParams({ location, cuisine: keyword }).toString();
-  const res = await fetch(`/api/yelp?${params}`);
-  if (!res.ok) throw new Error('Failed to fetch Yelp results');
-  const data = await res.json();
-  return data.businesses as unknown[];
-}
-
 // Fetch an AI suggestion from OpenAI via our secure API route
 async function fetchAISuggestion(userMsg: string, spicy: string): Promise<string> {
   const response = await fetch('/api/ai-suggest', {
