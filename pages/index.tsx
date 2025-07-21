@@ -1,115 +1,134 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+'use client';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import React, { useState } from 'react';
+import SurveyModal, { Prefs } from '../components/SurveyModal';
+import Chat from '../components/Chat';
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const cuisineOptions = ['Italian', 'Chinese', 'Indian', 'Mexican', 'American', 'Other'];
+const budgetOptions = ['<$10', '$10-20', '$20-30', '$30+'];
+const distanceOptions = ['Under 2 km', '2-5 km', '5-10 km', "Doesn't matter"];
+const dietOptions = ['None', 'Vegetarian', 'Vegan', 'Halal', 'Kosher', 'Other'];
+const adventurousnessOptions = ['Safe/Comfort only', 'Open to trying new things', 'Surprise me!'];
 
-export default function Home() {
+const defaultPrefs: Prefs = {
+  feeling: '',
+  cuisine: '',
+  budget: '',
+  distance: '',
+  diet: '',
+  adventurousness: '',
+  location: '',
+  spicy: '',
+};
+
+export default function MainPage() {
+  const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
+  const [modalOpen, setModalOpen] = useState(true);
+
+  const handleInlineChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setPrefs({ ...prefs, [e.target.name]: e.target.value });
+  };
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div style={{ maxWidth: 600, margin: '40px auto', padding: 16 }}>
+      <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Mood Food Chat</h1>
+      <SurveyModal
+        open={modalOpen}
+        prefs={prefs}
+        onSave={updated => {
+          setPrefs(updated);
+          setModalOpen(false);
+        }}
+        onClose={() => setModalOpen(false)}
+      />
+      {/* Inline filters shown only after modal is closed */}
+      {!modalOpen && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+          <input
+            name="feeling"
+            type="text"
+            placeholder="How are you feeling?"
+            value={prefs.feeling}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          />
+          <select
+            name="cuisine"
+            value={prefs.cuisine}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <option value="">Cuisine</option>
+            {cuisineOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <input
+            name="location"
+            type="text"
+            placeholder="Location"
+            value={prefs.location}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          />
+          <select
+            name="budget"
+            value={prefs.budget}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
           >
-            Read our docs
-          </a>
+            <option value="">Budget</option>
+            {budgetOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <select
+            name="distance"
+            value={prefs.distance}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          >
+            <option value="">Distance</option>
+            {distanceOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <select
+            name="diet"
+            value={prefs.diet}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          >
+            <option value="">Diet</option>
+            {dietOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <select
+            name="adventurousness"
+            value={prefs.adventurousness}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          >
+            <option value="">Adventurousness</option>
+            {adventurousnessOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+          <select
+            name="spicy"
+            value={prefs.spicy}
+            onChange={handleInlineChange}
+            className="p-2 rounded border border-gray-300"
+          >
+            <option value="">Spicy Preference</option>
+            <option value="Spicy">Spicy</option>
+            <option value="Mild">Mild</option>
+            <option value="No preference">No preference</option>
+          </select>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      {!modalOpen && <Chat prefs={prefs} />}
     </div>
   );
 }
