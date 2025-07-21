@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 // Restaurant type for Yelp results
 interface Restaurant {
@@ -89,21 +90,21 @@ export default function LocationsPage() {
     setError('');
     setDishes([]);
     fetchYelpResults({ location, keyword: String(dish) })
-      .then(restaurants => {
+      .then((restaurants: Restaurant[]) => {
         // For each restaurant, create a dish with mockPrice
-        const dishObjs: Dish[] = restaurants.map(r => ({
+        const dishObjs: Dish[] = restaurants.map((r: Restaurant) => ({
           name: String(dish),
           restaurant: r,
           mockPrice: getMockPrice(r.price),
         }));
         setDishes(dishObjs);
       })
-      .catch(err => setError('Failed to fetch restaurants.'))
+      .catch(() => setError('Failed to fetch restaurants.'))
       .finally(() => setLoading(false));
   }, [dish, location]);
 
   // Filter dishes by price filter
-  const filteredDishes = dishes.filter(d => {
+  const filteredDishes = dishes.filter((d: Dish) => {
     if (!priceFilter) return true;
     // Map price filter to range
     if (priceFilter === '<$10') return d.mockPrice < 10;
@@ -128,18 +129,21 @@ export default function LocationsPage() {
       )}
       {error && <div className="text-center text-red-600">{error}</div>}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {!loading && !error && filteredDishes.map((d, i) => (
+        {!loading && !error && filteredDishes.map((d: Dish) => (
           <div
             key={d.restaurant.name + d.restaurant.address}
             className="bg-white rounded-lg shadow p-4 flex flex-col h-full"
           >
             {/* Restaurant image */}
             {d.restaurant.image_url ? (
-              <img
+              <Image
                 src={d.restaurant.image_url}
                 alt={d.restaurant.name}
+                width={400}
+                height={144}
                 className="w-full h-36 object-cover rounded mb-4"
-                onError={e => (e.currentTarget.style.background = '#eee')}
+                style={{ objectFit: 'cover' }}
+                // If you don't know the image size, you can use layout="responsive" in older Next.js or fill in Next 13+
               />
             ) : (
               <div className="w-full h-36 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-400 text-3xl">
