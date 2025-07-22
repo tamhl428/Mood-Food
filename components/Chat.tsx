@@ -21,11 +21,11 @@ function renderMarkdown(message: string) {
 }
 
 // Fetch an AI suggestion from OpenAI via our secure API route
-async function fetchAISuggestion(userMsg: string, spicy: string): Promise<string> {
+async function fetchAISuggestion(userMsg: string, spicy: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<string> {
   const response = await fetch('/api/ai-suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userMessage: userMsg, spicy }),
+    body: JSON.stringify({ userMessage: userMsg, spicy, mode }),
   });
   if (!response.ok) throw new Error('Failed to get AI suggestion');
   const data = await response.json();
@@ -33,17 +33,41 @@ async function fetchAISuggestion(userMsg: string, spicy: string): Promise<string
   return data.aiMessage;
 }
 
-export default function Chat({ prefs }: { prefs: Prefs }) {
+export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: Prefs; triggerInitialMessage?: boolean }) {
   const [messages, setMessages] = useState<{ sender: 'user' | 'ai'; text: string }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [dish, setDish] = useState<string | null>(null);
+  const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, dish]);
+
+  // Trigger initial AI message when survey is submitted
+  useEffect(() => {
+    if (triggerInitialMessage && !hasTriggeredInitial && prefs.feeling) {
+      setHasTriggeredInitial(true);
+      setLoading(true);
+      
+      const initialMessage = `I'm feeling ${prefs.feeling} today.`;
+      setMessages([{ sender: 'user', text: initialMessage }]);
+      
+      fetchAISuggestion(initialMessage, prefs.spicy, 'initial')
+        .then(aiMessage => {
+          setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
+        })
+        .catch(err => {
+          const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+          setMessages(msgs => [...msgs, { sender: 'ai', text: `Sorry, I couldn't process that. ${errorMessage}` }]);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy]);
 
   // User sends a message, get AI suggestion, extract dish, and update chat
   const sendMessage = async (e: React.FormEvent) => {
@@ -52,7 +76,7 @@ export default function Chat({ prefs }: { prefs: Prefs }) {
     setMessages(msgs => [...msgs, { sender: 'user', text: input }]);
     setLoading(true);
     try {
-      const aiMessage = await fetchAISuggestion(input, prefs.spicy);
+      const aiMessage = await fetchAISuggestion(input, prefs.spicy, 'suggestion');
       setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
       const extracted = extractDishFromMarkdown(aiMessage);
       setDish(extracted);

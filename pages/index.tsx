@@ -24,9 +24,16 @@ const defaultPrefs: Prefs = {
 export default function MainPage() {
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
   const [modalOpen, setModalOpen] = useState(true);
+  const [surveySubmitted, setSurveySubmitted] = useState(false);
 
   const handleInlineChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setPrefs({ ...prefs, [e.target.name]: e.target.value });
+  };
+
+  const handleSurveySave = (updated: Prefs) => {
+    setPrefs(updated);
+    setModalOpen(false);
+    setSurveySubmitted(true);
   };
 
   return (
@@ -35,10 +42,7 @@ export default function MainPage() {
       <SurveyModal
         open={modalOpen}
         prefs={prefs}
-        onSave={updated => {
-          setPrefs(updated);
-          setModalOpen(false);
-        }}
+        onSave={handleSurveySave}
         onClose={() => setModalOpen(false)}
       />
       {/* Inline filters shown only after modal is closed */}
@@ -128,7 +132,7 @@ export default function MainPage() {
           </select>
         </div>
       )}
-      {!modalOpen && <Chat prefs={prefs} />}
+      {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
     </div>
   );
 }

@@ -1,6 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-function buildSystemPrompt(spicy: string) {
+function buildSystemPrompt(spicy: string, mode: 'initial' | 'suggestion' = 'suggestion') {
+  if (mode === 'initial') {
+    return `You are a playful and emotionally aware food concierge. Based on the user's mood, first respond warmly and ask an open-ended question about their day. Only suggest dishes after the user replies.
+
+Be warm, empathetic, and engaging. Ask a follow-up question that encourages them to share more about their day or what's on their mind. Keep it conversational and light-hearted.
+
+Example responses:
+- "You're feeling romantic? I love that! What's got you in such a lovely mood today?"
+- "Feeling stressed? I totally get that. What's been weighing on your mind lately?"
+- "Excited and energetic? That's fantastic! What's got you so pumped up today?"`;
+  }
+
   let spicyLine = '';
   if (spicy === 'Spicy') spicyLine = '\nThe user prefers spicy food. Suggest spicy dishes.';
   else if (spicy === 'Mild') spicyLine = '\nThe user prefers mild food. Suggest mild dishes.';
@@ -9,10 +20,10 @@ function buildSystemPrompt(spicy: string) {
   return `
 You are MoodFoodBot — a warm, empathetic assistant that helps users choose food based on their current emotional state.
 
-Respond with a concise and empathetic message (1–2 sentences max) that acknowledges the user’s mood, but do not ramble. Be comforting, human, and to the point.
+Respond with a concise and empathetic message (1–2 sentences max) that acknowledges the user's mood, but do not ramble. Be comforting, human, and to the point.
 
 Then suggest **exactly three dishes**, clearly bolded in Markdown, with no extra commentary. End with:
-👉 “Which one sounds good to you?”
+👉 "Which one sounds good to you?"
 
 Never mention anything about spicy or mild — that is handled separately through user survey filters and not your concern.
 ${spicyLine}
@@ -37,7 +48,7 @@ export default async function handler(
     return res.status(405).json({ aiMessage: '', error: 'Method not allowed' });
   }
 
-  const { userMessage, spicy } = req.body;
+  const { userMessage, spicy, mode = 'suggestion' } = req.body;
 
   if (!userMessage || typeof userMessage !== 'string') {
     return res.status(400).json({ aiMessage: '', error: 'User message is required' });
@@ -48,7 +59,7 @@ export default async function handler(
   }
 
   try {
-    const systemPrompt = buildSystemPrompt(spicy);
+    const systemPrompt = buildSystemPrompt(spicy, mode);
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -61,7 +72,7 @@ export default async function handler(
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage }
         ],
-        max_tokens: 180,
+        max_tokens: mode === 'initial' ? 100 : 180,
         temperature: 0.8,
       }),
     });
