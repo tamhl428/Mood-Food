@@ -65,6 +65,7 @@ export default function LocationsPage() {
   const router = useRouter();
   const { dish } = router.query;
   const [location, setLocation] = useState<string>('Toronto');
+  const [inputLocation, setInputLocation] = useState<string>('');
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -77,12 +78,29 @@ export default function LocationsPage() {
       if (storedPrefs) {
         try {
           const prefs = JSON.parse(storedPrefs);
-          if (prefs.location) setLocation(prefs.location);
+          if (prefs.location) {
+            setLocation(prefs.location);
+            setInputLocation(prefs.location);
+          }
           if (prefs.budget) setPriceFilter(prefs.budget);
         } catch {}
       }
     }
   }, []);
+
+  // Handle location search
+  const handleLocationSearch = () => {
+    if (inputLocation.trim()) {
+      setLocation(inputLocation.trim());
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLocationSearch();
+    }
+  };
 
   // Fetch Yelp results and generate dishes with mockPrice
   useEffect(() => {
@@ -127,6 +145,30 @@ export default function LocationsPage() {
           <p className="text-xl md:text-2xl text-blue-100 mb-8 animate-fade-in-delay">
             Discover the perfect place for your mood
           </p>
+          
+          {/* Location Search */}
+          <div className="max-w-md mx-auto mb-8 animate-fade-in-delay">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputLocation}
+                onChange={(e) => setInputLocation(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Enter city, country..."
+                className="flex-1 px-4 py-3 rounded-xl text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              />
+              <button
+                onClick={handleLocationSearch}
+                className="px-6 py-3 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl font-semibold transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+              >
+                Search
+              </button>
+            </div>
+            <p className="text-blue-200 text-sm mt-2">
+              Try: &quot;London, England&quot;, &quot;New York, NY&quot;, &quot;Tokyo, Japan&quot;
+            </p>
+          </div>
+          
           <div className="text-center text-blue-200 text-sm mb-4">
             Estimated dish prices are based on the restaurant&apos;s price tier and are for reference only.
           </div>
