@@ -1,14 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
-
-const cuisineOptions = ['Italian', 'Chinese', 'Indian', 'Mexican', 'American', 'Other'];
-const budgetOptions = ['<$10', '$10-20', '$20-30', '$30+'];
-const distanceOptions = ['Under 2 km', '2-5 km', '5-10 km', "Doesn't matter"];
-const dietOptions = ['None', 'Vegetarian', 'Vegan', 'Halal', 'Kosher', 'Other'];
-const adventurousnessOptions = ['Safe/Comfort only', 'Open to trying new things', 'Surprise me!'];
 
 const defaultPrefs: Prefs = {
   feeling: '',
@@ -21,118 +16,376 @@ const defaultPrefs: Prefs = {
   spicy: '',
 };
 
-export default function MainPage() {
-  const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
-  const [modalOpen, setModalOpen] = useState(true);
-  const [surveySubmitted, setSurveySubmitted] = useState(false);
+// Animation variants
+const fadeInUp = {
+  initial: { opacity: 0, y: 60 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: "easeOut" }
+};
 
-  const handleInlineChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setPrefs({ ...prefs, [e.target.name]: e.target.value });
-  };
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const scaleIn = {
+  initial: { opacity: 0, scale: 0.8 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { duration: 0.5, ease: "easeOut" }
+};
+
+
+
+export default function LandingPage() {
+  const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [surveySubmitted, setSurveySubmitted] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const handleSurveySave = (updated: Prefs) => {
     setPrefs(updated);
     setModalOpen(false);
     setSurveySubmitted(true);
+    setShowChat(true);
   };
 
+  const handleGetStarted = () => {
+    setModalOpen(true);
+  };
+
+  const features = [
+    {
+      icon: "🧠",
+      title: "AI-Powered Mood Analysis",
+      description: "Our intelligent system understands your emotions and suggests the perfect meal."
+    },
+    {
+      icon: "💬",
+      title: "Fun Chat Interface",
+      description: "Engage in natural conversation with our food concierge - no searching required."
+    },
+    {
+      icon: "🎯",
+      title: "Personalized Recommendations",
+      description: "Get suggestions tailored to your mood, preferences, and dietary needs."
+    },
+    {
+      icon: "🚀",
+      title: "Instant Ordering",
+      description: "From suggestion to order in seconds with seamless restaurant integration."
+    }
+  ];
+
+  const howItWorks = [
+    {
+      step: "1",
+      icon: "😊",
+      title: "Tell us your mood",
+      description: "Share how you&apos;re feeling today - happy, stressed, romantic, or anything in between."
+    },
+    {
+      step: "2", 
+      icon: "🤖",
+      title: "Get AI suggestions",
+      description: "Our intelligent system analyzes your mood and suggests the perfect dishes."
+    },
+    {
+      step: "3",
+      icon: "🍽️",
+      title: "Order and enjoy",
+      description: "Browse restaurants, place your order, and enjoy your mood-perfect meal."
+    }
+  ];
+
+  const testimonials = [
+    {
+      avatar: "👩‍💼",
+      name: "Sarah K.",
+      quote: "Got me the perfect comfort food for my breakup 😭❤️",
+      rating: "⭐⭐⭐⭐⭐"
+    },
+    {
+      avatar: "👨‍💻",
+      name: "Mike R.",
+      quote: "The AI actually understood my stress and suggested the perfect calming meal!",
+      rating: "⭐⭐⭐⭐⭐"
+    },
+    {
+      avatar: "👩‍🎨",
+      name: "Emma L.",
+      quote: "Finally, an app that gets my mood! No more endless scrolling through menus.",
+      rating: "⭐⭐⭐⭐⭐"
+    }
+  ];
+
+  if (showChat) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="max-w-4xl mx-auto p-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Mood Food Chat</h1>
+            <p className="text-gray-600">Let&apos;s find your perfect meal!</p>
+          </motion.div>
+          
+          <SurveyModal
+            open={modalOpen}
+            prefs={prefs}
+            onSave={handleSurveySave}
+            onClose={() => setModalOpen(false)}
+          />
+          
+          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: 600, margin: '40px auto', padding: 16 }}>
-      <h1 style={{ textAlign: 'center', marginBottom: 24 }}>Mood Food Chat</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background Animation */}
+        <div className="absolute inset-0">
+          <motion.div
+            animate={{
+              background: [
+                "radial-gradient(circle at 20% 80%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)",
+                "radial-gradient(circle at 80% 20%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)",
+                "radial-gradient(circle at 20% 80%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)"
+              ]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0"
+          />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center"
+          >
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6"
+            >
+              Crave the Right Thing
+              <br />
+              at the Right Time
+            </motion.h1>
+            
+            <motion.p
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+            >
+              Tell us how you feel. We&apos;ll help you order the food that matches your vibe.
+            </motion.p>
+            
+            <motion.button
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 20px 40px rgba(0, 122, 255, 0.3)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleGetStarted}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Get Started →
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Three simple steps to your perfect meal
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className="text-6xl mb-4"
+                >
+                  {item.icon}
+                </motion.div>
+                <div className="text-2xl font-bold text-blue-600 mb-2">{item.step}</div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose Mood Food?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Experience the future of food ordering with AI-powered mood analysis
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={scaleIn}
+                whileHover={{ y: -10 }}
+                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Real stories from people who found their perfect mood-food match
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="text-3xl mr-3">{testimonial.avatar}</div>
+                  <div>
+                    <div className="font-semibold text-gray-800">{testimonial.name}</div>
+                    <div className="text-yellow-500">{testimonial.rating}</div>
+                  </div>
+                </div>
+                <p className="text-gray-700 italic leading-relaxed">&quot;{testimonial.quote}&quot;</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              What&apos;s Your Mood Today?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who&apos;ve discovered the perfect meal for every emotion
+            </p>
+            <motion.button
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 20px 40px rgba(255, 255, 255, 0.2)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleGetStarted}
+              className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Start Now
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 bg-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="text-2xl mb-4">🍽️ Mood Food</div>
+          <p className="text-gray-400 mb-4">The intelligent way to order food based on your mood</p>
+          <div className="text-sm text-gray-500">
+            © 2024 Mood Food. Made with ❤️ for food lovers everywhere.
+          </div>
+        </div>
+      </footer>
+
+      {/* Survey Modal */}
       <SurveyModal
         open={modalOpen}
         prefs={prefs}
         onSave={handleSurveySave}
         onClose={() => setModalOpen(false)}
       />
-      {/* Inline filters shown only after modal is closed */}
-      {!modalOpen && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <input
-            name="feeling"
-            type="text"
-            placeholder="How are you feeling?"
-            value={prefs.feeling}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          />
-          <select
-            name="cuisine"
-            value={prefs.cuisine}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Cuisine</option>
-            {cuisineOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <input
-            name="location"
-            type="text"
-            placeholder="Location"
-            value={prefs.location}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          />
-          <select
-            name="budget"
-            value={prefs.budget}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Budget</option>
-            {budgetOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <select
-            name="distance"
-            value={prefs.distance}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Distance</option>
-            {distanceOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <select
-            name="diet"
-            value={prefs.diet}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Diet</option>
-            {dietOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <select
-            name="adventurousness"
-            value={prefs.adventurousness}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Adventurousness</option>
-            {adventurousnessOptions.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-          <select
-            name="spicy"
-            value={prefs.spicy}
-            onChange={handleInlineChange}
-            className="p-2 rounded border border-gray-300"
-          >
-            <option value="">Spicy Preference</option>
-            <option value="Spicy">Spicy</option>
-            <option value="Mild">Mild</option>
-            <option value="No preference">No preference</option>
-          </select>
-        </div>
-      )}
-      {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
     </div>
   );
 }
