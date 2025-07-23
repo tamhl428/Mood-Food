@@ -241,21 +241,12 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
     switch (field) {
       case 'feeling':
         return (
-          <div>
+          <select name="feeling" value={local.feeling} onChange={handleChange} style={selectStyle} required>
+            <option value="">Select your mood</option>
             {emotionOptions.map(opt => (
-              <label key={opt.value} style={{ display: 'block', marginBottom: 12 }}>
-                <input
-                  type="radio"
-                  name="feeling"
-                  value={opt.value}
-                  checked={local.feeling === opt.value}
-                  onChange={handleChange}
-                  style={{ marginRight: 12 }}
-                />
-                {opt.label}
-              </label>
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
-          </div>
+          </select>
         );
       
       case 'cuisine':
