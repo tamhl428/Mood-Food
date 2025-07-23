@@ -97,7 +97,7 @@ const modalStyle: React.CSSProperties = {
   top: 0, left: 0, width: '100vw', height: '100vh',
   background: 'rgba(0,0,0,0.5)',
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  zIndex: 1000,
+  zIndex: 9999,
   backdropFilter: 'blur(4px)',
 };
 
@@ -107,6 +107,8 @@ const dialogStyle: React.CSSProperties = {
   borderRadius: 16,
   minWidth: 400,
   maxWidth: 500,
+  maxHeight: '80vh',
+  overflowY: 'auto',
   boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
   border: '2px solid #e3f2fd',
   position: 'relative',
@@ -124,6 +126,7 @@ const closeButtonStyle: React.CSSProperties = {
   padding: 4,
   borderRadius: 4,
   transition: 'all 0.2s',
+  zIndex: 10000,
 };
 
 const stepIndicatorStyle: React.CSSProperties = {
@@ -152,6 +155,7 @@ const buttonStyle = (primary: boolean = false): React.CSSProperties => ({
   fontWeight: 500,
   transition: 'all 0.2s',
   minWidth: 100,
+  zIndex: 10001,
 });
 
 const inputStyle: React.CSSProperties = {
@@ -168,8 +172,6 @@ const selectStyle: React.CSSProperties = {
   ...inputStyle,
   background: '#fff',
 };
-
-
 
 const steps = [
   { title: 'How are you feeling?', field: 'feeling' },
@@ -369,7 +371,13 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
             {renderCurrentStep()}
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            gap: 16,
+            position: 'relative',
+            zIndex: 10002
+          }}>
             <button
               type="button"
               onClick={handleBack}
