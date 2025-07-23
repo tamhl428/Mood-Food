@@ -1,5 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+// Fun food emojis to inject into recommendations
+const foodEmojis = ['🍕', '😋', '🥗', '🍔', '🍜', '🍣', '🍛', '🌮', '🥘', '🍝', '🍲', '🥪', '🍖', '🥩', '🍗', '🥓', '🍤', '🦐', '🐟', '🥑', '🥕', '🥬', '🍅', '🧀', '🥚', '🥛', '🍞', '🥐', '🥖', '🍰', '🍪', '🍩', '🍦', '🍨', '🍧', '🍡', '🍭', '🍫', '🍬', '🍯', '🥜', '🌰', '🍇', '🍓', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍊', '🍋', '🍌', '🍉', '🍈', '🍐', '🍎', '🍏'];
+
+function injectEmojis(text: string): string {
+  // Split the text into sentences
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  
+  return sentences.map((sentence, index) => {
+    // Add emoji every 2-3 sentences for variety
+    if (index > 0 && index % 2 === 0) {
+      const randomEmoji = foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
+      return `${randomEmoji} ${sentence}`;
+    }
+    return sentence;
+  }).join(' ');
+}
+
 function buildSystemPrompt(spicy: string, mode: 'initial' | 'suggestion' = 'suggestion') {
   if (mode === 'initial') {
     return `You are a playful and emotionally aware food concierge. Based on the user's mood, first respond warmly and ask an open-ended question about their day. Only suggest dishes after the user replies.
@@ -87,10 +104,15 @@ export default async function handler(
     }
 
     const data = await response.json();
-    const aiMessage = data.choices?.[0]?.message?.content?.trim();
+    let aiMessage = data.choices?.[0]?.message?.content?.trim();
 
     if (!aiMessage) {
       return res.status(500).json({ aiMessage: '', error: 'No suggestion received from OpenAI' });
+    }
+
+    // Inject emojis for suggestion mode only
+    if (mode === 'suggestion') {
+      aiMessage = injectEmojis(aiMessage);
     }
 
     res.status(200).json({ aiMessage });
