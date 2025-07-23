@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
 
@@ -13,29 +12,6 @@ const defaultPrefs: Prefs = {
   location: '',
   spicy: '',
 };
-
-// Animation variants
-const fadeInUp = {
-  initial: { opacity: 0, y: 60 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: "easeOut" }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.8 },
-  animate: { opacity: 1, scale: 1 },
-  transition: { duration: 0.5, ease: "easeOut" }
-};
-
-
 
 export default function LandingPage() {
   const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
@@ -123,14 +99,10 @@ export default function LandingPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto p-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
+          <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Mood Food Chat</h1>
             <p className="text-gray-600">Let&apos;s find your perfect meal!</p>
-          </motion.div>
+          </div>
           
           <SurveyModal
             open={modalOpen}
@@ -151,176 +123,99 @@ export default function LandingPage() {
       <section className="relative overflow-hidden">
         {/* Background Animation */}
         <div className="absolute inset-0">
-          <motion.div
-            animate={{
-              background: [
-                "radial-gradient(circle at 20% 80%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)",
-                "radial-gradient(circle at 80% 20%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)",
-                "radial-gradient(circle at 20% 80%, rgba(220, 239, 255, 0.3) 0%, transparent 50%)"
-              ]
-            }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0"
-          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-indigo-100/30" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center"
-          >
-            <motion.h1
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6"
-            >
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
               Crave the Right Thing
               <br />
               at the Right Time
-            </motion.h1>
+            </h1>
             
-            <motion.p
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
-            >
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Tell us how you feel. We&apos;ll help you order the food that matches your vibe.
-            </motion.p>
+            </p>
             
-            <motion.button
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 20px 40px rgba(0, 122, 255, 0.3)"
-              }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleGetStarted}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               Get Started →
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         </div>
       </section>
 
       {/* How It Works Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Three simple steps to your perfect meal
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-8"
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((item, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={fadeInUp}
-                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100"
+                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:shadow-lg transition-all duration-300"
               >
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className="text-6xl mb-4"
-                >
+                <div className="text-6xl mb-4 hover:scale-110 transition-transform duration-300">
                   {item.icon}
-                </motion.div>
+                </div>
                 <div className="text-2xl font-bold text-blue-600 mb-2">{item.step}</div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
                 <p className="text-gray-600 leading-relaxed">{item.description}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose Mood Food?</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Experience the future of food ordering with AI-powered mood analysis
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={scaleIn}
-                whileHover={{ y: -10 }}
-                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300"
+                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="text-4xl mb-4">{feature.icon}</div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Real stories from people who found their perfect mood-food match
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-8"
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <motion.div
+              <div
                 key={index}
-                variants={fadeInUp}
-                whileHover={{ y: -5 }}
-                className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100"
+                className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="flex items-center mb-4">
                   <div className="text-3xl mr-3">{testimonial.avatar}</div>
@@ -330,39 +225,27 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <p className="text-gray-700 italic leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Final CTA Section */}
       <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            What&apos;s Your Mood Today?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of users who&apos;ve discovered the perfect meal for every emotion
+          </p>
+          <button
+            onClick={handleGetStarted}
+            className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              What&apos;s Your Mood Today?
-            </h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who&apos;ve discovered the perfect meal for every emotion
-            </p>
-            <motion.button
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 20px 40px rgba(255, 255, 255, 0.2)"
-              }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleGetStarted}
-              className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              Start Now
-            </motion.button>
-          </motion.div>
+            Start Now
+          </button>
         </div>
       </section>
 
