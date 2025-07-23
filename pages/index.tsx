@@ -128,19 +128,17 @@ export default function LandingPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
           <div className="text-center">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6 animate-fade-in">
               Crave the Right Thing
               <br />
               at the Right Time
             </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay">
               Tell us how you feel. We&apos;ll help you order the food that matches your vibe.
             </p>
-            
             <button
               onClick={handleGetStarted}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounce-subtle"
             >
               Get Started →
             </button>
@@ -153,16 +151,14 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Three simple steps to your perfect meal
-            </p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Three simple steps to your perfect meal</p>
           </div>
-
+          
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((item, index) => (
               <div
                 key={index}
-                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:shadow-lg transition-all duration-300"
+                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
               >
                 <div className="text-6xl mb-4 hover:scale-110 transition-transform duration-300">
                   {item.icon}
@@ -181,11 +177,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose Mood Food?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Experience the future of food ordering with AI-powered mood analysis
-            </p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of food ordering with AI-powered mood analysis</p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <div
@@ -206,11 +200,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Real stories from people who found their perfect mood-food match
-            </p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Real stories from people who found their perfect mood-food match</p>
           </div>
-
+          
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <div
@@ -234,12 +226,12 @@ export default function LandingPage() {
       {/* Final CTA Section */}
       <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            What&apos;s Your Mood Today?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who&apos;ve discovered the perfect meal for every emotion
-          </p>
+                      <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              What&apos;s Your Mood Today?
+            </h2>
+                      <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who&apos;ve discovered the perfect meal for every emotion
+            </p>
           <button
             onClick={handleGetStarted}
             className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -250,17 +242,12 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-gray-900 text-white">
+      <footer className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="text-2xl mb-4">🍽️ Mood Food</div>
-          <p className="text-gray-400 mb-4">The intelligent way to order food based on your mood</p>
-          <div className="text-sm text-gray-500">
-            © 2024 Mood Food. Made with ❤️ for food lovers everywhere.
-          </div>
+          <p className="text-gray-600">© 2024 Mood Food. Made with ❤️ for food lovers everywhere.</p>
         </div>
       </footer>
 
-      {/* Survey Modal */}
       <SurveyModal
         open={modalOpen}
         prefs={prefs}
