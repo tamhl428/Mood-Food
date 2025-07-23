@@ -50,12 +50,13 @@ function getMockPrice(priceTier?: string): number {
 // Skeleton card for loading state
 function SkeletonCard() {
   return (
-    <div className="animate-pulse bg-white rounded-lg shadow p-4 flex flex-col">
-      <div className="bg-gray-200 h-36 w-full rounded mb-4" />
-      <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+    <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full animate-pulse">
+      <div className="bg-gradient-to-br from-gray-200 to-gray-300 h-48 w-full rounded-xl mb-4" />
+      <div className="h-6 bg-gray-200 rounded w-3/4 mb-3" />
       <div className="h-4 bg-gray-100 rounded w-1/2 mb-2" />
-      <div className="h-4 bg-gray-100 rounded w-1/3 mb-2" />
-      <div className="h-8 bg-gray-200 rounded w-1/2 mt-auto" />
+      <div className="h-4 bg-gray-100 rounded w-2/3 mb-3" />
+      <div className="h-5 bg-gray-200 rounded w-1/3 mb-4" />
+      <div className="h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl w-full mt-auto" />
     </div>
   );
 }
@@ -115,61 +116,140 @@ export default function LocationsPage() {
   });
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-8">
-        Restaurants for <span className="text-blue-700">{dish || '...'}</span> in <span className="text-blue-700">{location}</span>
-      </h1>
-      <div className="text-center text-gray-500 text-sm mb-4">
-        Estimated dish prices are based on the restaurant&apos;s price tier and are for reference only.
-      </div>
-      {loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
-        </div>
-      )}
-      {error && <div className="text-center text-red-600">{error}</div>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {!loading && !error && filteredDishes.map((d: Dish) => (
-          <div
-            key={d.restaurant.name + d.restaurant.address}
-            className="bg-white rounded-lg shadow p-4 flex flex-col h-full"
-          >
-            {/* Restaurant image */}
-            {d.restaurant.image_url ? (
-              <Image
-                src={d.restaurant.image_url}
-                alt={d.restaurant.name}
-                width={400}
-                height={144}
-                className="w-full h-36 object-cover rounded mb-4"
-                style={{ objectFit: 'cover' }}
-                // If you don't know the image size, you can use layout="responsive" in older Next.js or fill in Next 13+
-              />
-            ) : (
-              <div className="w-full h-36 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-400 text-3xl">
-                <span>🍽️</span>
-              </div>
-            )}
-            <div className="font-semibold text-lg mb-1">{d.restaurant.name}</div>
-            <div className="mb-1">{renderStars(d.restaurant.rating)} <span className="ml-2 text-gray-600">({d.restaurant.rating})</span></div>
-            <div className="text-gray-600 mb-1 text-sm">{d.restaurant.address}</div>
-            <div className="text-gray-700 mb-2">Estimated price: ${d.mockPrice}</div>
-            <a
-              href={d.restaurant.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-auto inline-block px-4 py-2 bg-blue-700 text-white rounded hover:bg-blue-800 transition"
-            >
-              View on Yelp
-            </a>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+            🍽️ {dish || 'Delicious Food'} in {location}
+          </h1>
+          <p className="text-xl md:text-2xl text-blue-100 mb-8 animate-fade-in-delay">
+            Discover the perfect place for your mood
+          </p>
+          <div className="text-center text-blue-200 text-sm mb-4">
+            Estimated dish prices are based on the restaurant&apos;s price tier and are for reference only.
           </div>
-        ))}
-      </div>
-      {!loading && !error && filteredDishes.length === 0 && (
-        <div className="text-center text-gray-500 mt-12">
-          No restaurants found for &quot;{dish}&quot; in {location}.
         </div>
-      )}
+      </section>
+
+      {/* Content Section */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Loading State */}
+          {loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-12">
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
+                <div className="text-red-600 text-6xl mb-4">😔</div>
+                <h3 className="text-xl font-semibold text-red-800 mb-2">Oops! Something went wrong</h3>
+                <p className="text-red-600">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Results Grid */}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredDishes.map((d: Dish, index: number) => (
+                <div
+                  key={d.restaurant.name + d.restaurant.address}
+                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {/* Restaurant image */}
+                  <div className="relative h-48 rounded-t-2xl overflow-hidden">
+                    {d.restaurant.image_url ? (
+                      <Image
+                        src={d.restaurant.image_url}
+                        alt={d.restaurant.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-400 text-6xl">
+                        🍽️
+                      </div>
+                    )}
+                    {/* Price badge */}
+                    <div className="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
+                      <span className="text-green-600 font-bold">${d.mockPrice}</span>
+                    </div>
+                  </div>
+
+                  {/* Restaurant info */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-bold text-xl text-gray-800 mb-2">{d.restaurant.name}</h3>
+                      <div className="text-sm text-gray-500">🍽️</div>
+                    </div>
+                    
+                    <div className="flex items-center mb-3">
+                      {renderStars(d.restaurant.rating)}
+                      <span className="ml-2 text-gray-600 text-sm">({d.restaurant.rating})</span>
+                    </div>
+                    
+                    <div className="text-gray-600 text-sm mb-4 leading-relaxed">
+                      📍 {d.restaurant.address}
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="text-green-600 font-semibold">
+                        Estimated: ${d.mockPrice}
+                      </div>
+                      <a
+                        href={d.restaurant.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
+                      >
+                        View on Yelp →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* No Results */}
+          {!loading && !error && filteredDishes.length === 0 && (
+            <div className="text-center py-16">
+              <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md mx-auto">
+                <div className="text-gray-400 text-8xl mb-6">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">No restaurants found</h3>
+                <p className="text-gray-600 mb-6">
+                  We couldn&apos;t find any restaurants for &quot;{dish}&quot; in {location}.
+                </p>
+                <button
+                  onClick={() => router.push('/')}
+                  className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-3 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 font-semibold"
+                >
+                  Try Something Else
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Back to Home */}
+      <section className="py-8 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <button
+            onClick={() => router.push('/')}
+            className="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300"
+          >
+            ← Back to Mood Food
+          </button>
+        </div>
+      </section>
     </div>
   );
 } 
