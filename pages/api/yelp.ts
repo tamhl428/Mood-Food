@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     cuisine as string
   ];
   
-  let allBusinesses: any[] = [];
+  let allBusinesses: YelpBusiness[] = [];
   
   try {
     for (const term of searchTerms) {

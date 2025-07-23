@@ -105,8 +105,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Add location to addresses and ensure all restaurants have price and image_url
   const formattedRestaurants = restaurants.map(restaurant => ({
     ...restaurant,
-    price: (restaurant as any).price || '$$',
-    image_url: (restaurant as any).image_url || undefined,
+    price: (restaurant as { price?: string }).price || '$$',
+    image_url: (restaurant as { image_url?: string }).image_url || undefined,
     address: `${restaurant.address}, ${location || 'Your City'}`
   }));
 
