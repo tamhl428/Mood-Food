@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
+import Image from 'next/image';
 
 const defaultPrefs: Prefs = {
   feeling: '',
@@ -104,6 +105,15 @@ export default function LandingPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-4xl mx-auto p-6">
           <div className="text-center mb-8">
+            {/* Logo */}
+            <div className="flex justify-center mb-4">
+                          <Image
+              src="/logo.svg"
+              alt="Mood Food Logo"
+              width={140}
+              height={50}
+            />
+            </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Mood Food Chat</h1>
             <p className="text-gray-600">Let&apos;s find your perfect meal!</p>
           </div>
@@ -132,6 +142,16 @@ export default function LandingPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
           <div className="text-center">
+            {/* Logo */}
+            <div className="flex justify-center mb-8">
+              <Image
+                src="/logo.svg"
+                alt="Mood Food Logo"
+                width={140}
+                height={50}
+                className="animate-fade-in"
+              />
+            </div>
             <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6 animate-fade-in">
               Crave the Right Thing
               <br />

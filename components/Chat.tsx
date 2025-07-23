@@ -21,11 +21,11 @@ function renderMarkdown(message: string) {
 }
 
 // Fetch an AI suggestion from OpenAI via our secure API route
-async function fetchAISuggestion(userMsg: string, spicy: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<string> {
+async function fetchAISuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<string> {
   const response = await fetch('/api/ai-suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userMessage: userMsg, spicy, mode }),
+    body: JSON.stringify({ userMessage: userMsg, spicy, cuisine, mode }),
   });
   if (!response.ok) throw new Error('Failed to get AI suggestion');
   const data = await response.json();
@@ -55,7 +55,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       const initialMessage = `I'm feeling ${prefs.feeling} today.`;
       setMessages([{ sender: 'user', text: initialMessage }]);
       
-      fetchAISuggestion(initialMessage, prefs.spicy, 'initial')
+      fetchAISuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial')
         .then(aiMessage => {
           setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
         })
@@ -76,7 +76,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     setMessages(msgs => [...msgs, { sender: 'user', text: input }]);
     setLoading(true);
     try {
-      const aiMessage = await fetchAISuggestion(input, prefs.spicy, 'suggestion');
+      const aiMessage = await fetchAISuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion');
       setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
       const extracted = extractDishFromMarkdown(aiMessage);
       setDish(extracted);

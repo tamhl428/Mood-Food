@@ -20,11 +20,35 @@ interface Dish {
 
 // Helper to fetch Yelp results from our API
 async function fetchYelpResults({ location, keyword }: { location: string; keyword: string }): Promise<Restaurant[]> {
-  const params = new URLSearchParams({ location, cuisine: keyword }).toString();
-  const res = await fetch(`/api/yelp?${params}`);
-  if (!res.ok) throw new Error('Failed to fetch Yelp results');
-  const data = await res.json();
-  return data.businesses as Restaurant[];
+  try {
+    const params = new URLSearchParams({ location, cuisine: keyword }).toString();
+    const res = await fetch(`/api/yelp?${params}`);
+    if (!res.ok) throw new Error('Failed to fetch Yelp results');
+    const data = await res.json();
+    
+    // If Yelp returns no results, try mock API
+    if (!data.businesses || data.businesses.length === 0) {
+      console.log('No Yelp results, trying mock API...');
+      const mockParams = new URLSearchParams({ cuisine: keyword, location }).toString();
+      const mockRes = await fetch(`/api/mock-restaurants?${mockParams}`);
+      if (mockRes.ok) {
+        const mockData = await mockRes.json();
+        return mockData.businesses as Restaurant[];
+      }
+    }
+    
+    return data.businesses as Restaurant[];
+  } catch (error) {
+    console.log('Yelp API failed, trying mock API...');
+    // Fallback to mock API
+    const mockParams = new URLSearchParams({ cuisine: keyword, location }).toString();
+    const mockRes = await fetch(`/api/mock-restaurants?${mockParams}`);
+    if (mockRes.ok) {
+      const mockData = await mockRes.json();
+      return mockData.businesses as Restaurant[];
+    }
+    throw new Error('Failed to fetch restaurant results');
+  }
 }
 
 // Helper to render stars for rating
@@ -139,6 +163,16 @@ export default function LocationsPage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/logo.svg"
+              alt="Mood Food Logo"
+              width={140}
+              height={50}
+              className="animate-fade-in"
+            />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
             🍽️ {dish || 'Delicious Food'} in {location}
           </h1>
