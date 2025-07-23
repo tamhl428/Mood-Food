@@ -21,6 +21,10 @@ export default function LandingPage() {
 
   const handleSurveySave = (updated: Prefs) => {
     setPrefs(updated);
+    // Save to localStorage so the locations page can access it
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('moodfood_prefs', JSON.stringify(updated));
+    }
     setModalOpen(false);
     setSurveySubmitted(true);
     setShowChat(true);
