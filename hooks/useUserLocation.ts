@@ -75,18 +75,14 @@ export const useUserLocation = (options: GeolocationOptions = {}) => {
     };
 
     // Request location
-    const watchId = navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.getCurrentPosition(
       successHandler,
       errorHandler,
       defaultOptions
     );
 
-    // Cleanup function
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
+    // No cleanup needed for getCurrentPosition
+    return () => {};
   }, [options.enableHighAccuracy, options.timeout, options.maximumAge]);
 
   // Function to manually refresh location

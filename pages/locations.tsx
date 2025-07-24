@@ -38,7 +38,7 @@ async function fetchYelpResults({ location, keyword }: { location: string; keywo
     }
     
     return data.businesses as Restaurant[];
-  } catch (error) {
+  } catch {
     console.log('Yelp API failed, trying mock API...');
     // Fallback to mock API
     const mockParams = new URLSearchParams({ cuisine: keyword, location }).toString();
