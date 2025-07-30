@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
-import MoodModal, { MoodPrefs } from '../components/MoodModal';
+import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
 import Image from 'next/image';
 
-const defaultPrefs: MoodPrefs = {
+const defaultPrefs: Prefs = {
   feeling: '',
   cuisine: '',
+  distance: '',
+  diet: '',
+  adventurousness: '',
   spicy: '',
 };
 
 export default function LandingPage() {
-  const [prefs, setPrefs] = useState<MoodPrefs>(defaultPrefs);
+  const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
   const [modalOpen, setModalOpen] = useState(false);
-  const [moodSubmitted, setMoodSubmitted] = useState(false);
+  const [surveySubmitted, setSurveySubmitted] = useState(false);
   const [showChat, setShowChat] = useState(false);
 
-  const handleMoodSave = (updated: MoodPrefs) => {
+  const handleSurveySave = (updated: Prefs) => {
     setPrefs(updated);
     // Save to localStorage so the chat can access it
     if (typeof window !== 'undefined') {
@@ -23,12 +26,15 @@ export default function LandingPage() {
       const sanitizedPrefs = {
         feeling: String(updated.feeling || '').substring(0, 50),
         cuisine: String(updated.cuisine || '').substring(0, 50),
+        distance: String(updated.distance || '').substring(0, 30),
+        diet: String(updated.diet || '').substring(0, 30),
+        adventurousness: String(updated.adventurousness || '').substring(0, 50),
         spicy: String(updated.spicy || '').substring(0, 20),
       };
       localStorage.setItem('moodzera_prefs', JSON.stringify(sanitizedPrefs));
     }
     setModalOpen(false);
-    setMoodSubmitted(true);
+    setSurveySubmitted(true);
     setShowChat(true);
   };
 
@@ -119,14 +125,14 @@ export default function LandingPage() {
             <p className="text-gray-600">Let&apos;s find your perfect recipe!</p>
           </div>
           
-          <MoodModal
+          <SurveyModal
             open={modalOpen}
             prefs={prefs}
-            onSave={handleMoodSave}
+            onSave={handleSurveySave}
             onClose={() => setModalOpen(false)}
           />
           
-          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={moodSubmitted} />}
+          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
         </div>
       </div>
     );
@@ -273,10 +279,10 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      <MoodModal
+      <SurveyModal
         open={modalOpen}
         prefs={prefs}
-        onSave={handleMoodSave}
+        onSave={handleSurveySave}
         onClose={() => setModalOpen(false)}
       />
     </div>

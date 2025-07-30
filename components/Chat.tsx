@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { MoodPrefs } from './MoodModal';
+import type { Prefs } from './SurveyModal';
 
 // Render Markdown bold (**text**) as <strong>
 function renderMarkdown(message: string) {
@@ -35,7 +35,7 @@ async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: st
   return data;
 }
 
-export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: MoodPrefs; triggerInitialMessage?: boolean }) {
+export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: Prefs; triggerInitialMessage?: boolean }) {
   const [messages, setMessages] = useState<{ sender: 'user' | 'ai'; text: string }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, recipe]);
 
-  // Trigger initial AI message when mood is submitted
+  // Trigger initial AI message when survey is submitted
   useEffect(() => {
     if (triggerInitialMessage && !hasTriggeredInitial && prefs.feeling) {
       setHasTriggeredInitial(true);

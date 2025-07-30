@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 
-export interface MoodPrefs {
+export interface Prefs {
   feeling: string;
   cuisine: string;
+  distance: string;
+  diet: string;
+  adventurousness: string;
   spicy: string;
 }
 
-interface MoodModalProps {
+interface SurveyModalProps {
   open: boolean;
-  prefs: MoodPrefs;
-  onSave: (prefs: MoodPrefs) => void;
+  prefs: Prefs;
+  onSave: (prefs: Prefs) => void;
   onClose: () => void;
 }
 
-const moodOptions = [
+const feelingOptions = [
   { value: 'happy', label: 'Happy 😊', description: 'Feeling joyful and upbeat' },
   { value: 'sad', label: 'Sad 😢', description: 'Feeling down or melancholic' },
   { value: 'stressed', label: 'Stressed 😰', description: 'Feeling overwhelmed or anxious' },
@@ -42,14 +45,40 @@ const cuisineOptions = [
   { value: 'Other', label: 'Other 🌍' },
 ];
 
+const distanceOptions = [
+  { value: '0-1', label: '0-1 mile' },
+  { value: '1-3', label: '1-3 miles' },
+  { value: '3-5', label: '3-5 miles' },
+  { value: '5-10', label: '5-10 miles' },
+  { value: '10+', label: '10+ miles' },
+];
+
+const dietOptions = [
+  { value: 'None', label: 'No restrictions' },
+  { value: 'Vegetarian', label: 'Vegetarian 🌱' },
+  { value: 'Vegan', label: 'Vegan 🥬' },
+  { value: 'Gluten-free', label: 'Gluten-free 🌾' },
+  { value: 'Dairy-free', label: 'Dairy-free 🥛' },
+  { value: 'Keto', label: 'Keto 🥩' },
+  { value: 'Paleo', label: 'Paleo 🥑' },
+];
+
+const adventurousnessOptions = [
+  { value: 'Very conservative', label: 'Very conservative 😊', description: 'Stick to familiar favorites' },
+  { value: 'Somewhat conservative', label: 'Somewhat conservative 🙂', description: 'Slight variations on classics' },
+  { value: 'Moderate', label: 'Moderate 🤔', description: 'Mix of familiar and new' },
+  { value: 'Somewhat adventurous', label: 'Somewhat adventurous 😎', description: 'Try new cuisines and dishes' },
+  { value: 'Very adventurous', label: 'Very adventurous 🚀', description: 'Bring on the exotic and unusual' },
+];
+
 const spicyOptions = [
   { value: 'Spicy', label: 'Spicy 🔥' },
   { value: 'Mild', label: 'Mild 😊' },
   { value: 'No preference', label: 'No preference 🤷' },
 ];
 
-export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalProps) {
-  const [currentPrefs, setCurrentPrefs] = useState<MoodPrefs>(prefs);
+export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModalProps) {
+  const [currentPrefs, setCurrentPrefs] = useState<Prefs>(prefs);
   const [step, setStep] = useState(1);
 
   const handleSave = () => {
@@ -57,13 +86,16 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
     const sanitizedPrefs = {
       feeling: String(currentPrefs.feeling || '').substring(0, 50),
       cuisine: String(currentPrefs.cuisine || '').substring(0, 50),
+      distance: String(currentPrefs.distance || '').substring(0, 30),
+      diet: String(currentPrefs.diet || '').substring(0, 30),
+      adventurousness: String(currentPrefs.adventurousness || '').substring(0, 50),
       spicy: String(currentPrefs.spicy || '').substring(0, 20),
     };
     onSave(sanitizedPrefs);
   };
 
   const handleNext = () => {
-    if (step < 3) {
+    if (step < 6) {
       setStep(step + 1);
     } else {
       handleSave();
@@ -76,7 +108,7 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
     }
   };
 
-  const updatePrefs = (key: keyof MoodPrefs, value: string) => {
+  const updatePrefs = (key: keyof Prefs, value: string) => {
     setCurrentPrefs(prev => ({ ...prev, [key]: value }));
   };
 
@@ -98,7 +130,7 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
           </div>
           <div className="mt-2">
             <div className="flex space-x-2">
-              {[1, 2, 3].map((stepNum) => (
+              {[1, 2, 3, 4, 5, 6].map((stepNum) => (
                 <div
                   key={stepNum}
                   className={`h-2 flex-1 rounded-full ${
@@ -116,7 +148,7 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">What&apos;s your mood today?</h3>
               <div className="space-y-3">
-                {moodOptions.map((option) => (
+                {feelingOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('feeling', option.value)}
@@ -157,6 +189,70 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
 
           {step === 3 && (
             <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">How far are you willing to travel?</h3>
+              <div className="space-y-3">
+                {distanceOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updatePrefs('distance', option.value)}
+                    className={`w-full p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                      currentPrefs.distance === option.value
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-lg font-medium">{option.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Any dietary restrictions?</h3>
+              <div className="space-y-3">
+                {dietOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updatePrefs('diet', option.value)}
+                    className={`w-full p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                      currentPrefs.diet === option.value
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-lg font-medium">{option.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">How adventurous are you with food?</h3>
+              <div className="space-y-3">
+                {adventurousnessOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => updatePrefs('adventurousness', option.value)}
+                    className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                      currentPrefs.adventurousness === option.value
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="text-lg font-medium">{option.label}</div>
+                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === 6 && (
+            <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">How spicy do you like your food?</h3>
               <div className="space-y-3">
                 {spicyOptions.map((option) => (
@@ -193,11 +289,14 @@ export default function MoodModal({ open, prefs, onSave, onClose }: MoodModalPro
             disabled={
               (step === 1 && !currentPrefs.feeling) ||
               (step === 2 && !currentPrefs.cuisine) ||
-              (step === 3 && !currentPrefs.spicy)
+              (step === 3 && !currentPrefs.distance) ||
+              (step === 4 && !currentPrefs.diet) ||
+              (step === 5 && !currentPrefs.adventurousness) ||
+              (step === 6 && !currentPrefs.spicy)
             }
             className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {step === 3 ? 'Get Recipes' : 'Next'}
+            {step === 6 ? 'Get Recipes' : 'Next'}
           </button>
         </div>
       </div>
