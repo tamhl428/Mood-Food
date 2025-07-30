@@ -1,4 +1,4 @@
-# Mood Food
+# MOODZERA
 
 AI-powered food recommendations based on your mood!
 

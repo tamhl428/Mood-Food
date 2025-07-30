@@ -28,7 +28,6 @@ async function fetchYelpResults({ location, keyword }: { location: string; keywo
     
     // If Yelp returns no results, try mock API
     if (!data.businesses || data.businesses.length === 0) {
-      console.log('No Yelp results, trying mock API...');
       const mockParams = new URLSearchParams({ cuisine: keyword, location }).toString();
       const mockRes = await fetch(`/api/mock-restaurants?${mockParams}`);
       if (mockRes.ok) {
@@ -39,7 +38,6 @@ async function fetchYelpResults({ location, keyword }: { location: string; keywo
     
     return data.businesses as Restaurant[];
   } catch {
-    console.log('Yelp API failed, trying mock API...');
     // Fallback to mock API
     const mockParams = new URLSearchParams({ cuisine: keyword, location }).toString();
     const mockRes = await fetch(`/api/mock-restaurants?${mockParams}`);
@@ -98,16 +96,24 @@ export default function LocationsPage() {
   // Get location and price filter from localStorage (set by survey)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedPrefs = localStorage.getItem('moodfood_prefs');
+      const storedPrefs = localStorage.getItem('moodzera_prefs');
       if (storedPrefs) {
         try {
           const prefs = JSON.parse(storedPrefs);
-          if (prefs.location) {
-            setLocation(prefs.location);
-            setInputLocation(prefs.location);
+          // Sanitize data from localStorage
+          if (prefs.location && typeof prefs.location === 'string') {
+            const sanitizedLocation = prefs.location.substring(0, 100).replace(/[<>]/g, '');
+            setLocation(sanitizedLocation);
+            setInputLocation(sanitizedLocation);
           }
-          if (prefs.budget) setPriceFilter(prefs.budget);
-        } catch {}
+          if (prefs.budget && typeof prefs.budget === 'string') {
+            const sanitizedBudget = prefs.budget.substring(0, 20).replace(/[<>]/g, '');
+            setPriceFilter(sanitizedBudget);
+          }
+        } catch {
+          // If localStorage data is corrupted, ignore it
+          console.warn('Invalid localStorage data, using defaults');
+        }
       }
     }
   }, []);
@@ -167,9 +173,9 @@ export default function LocationsPage() {
           <div className="flex justify-center mb-6">
             <Image
               src="/logo.svg"
-              alt="Mood Food Logo"
-              width={140}
-              height={50}
+              alt="MOODZERA Logo"
+              width={200}
+              height={80}
               className="animate-fade-in"
             />
           </div>
@@ -322,7 +328,7 @@ export default function LocationsPage() {
             onClick={() => router.push('/')}
             className="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300"
           >
-            ← Back to Mood Food
+            ← Back to MOODZERA
           </button>
         </div>
       </section>

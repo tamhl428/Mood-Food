@@ -24,7 +24,18 @@ export default function LandingPage() {
     setPrefs(updated);
     // Save to localStorage so the locations page can access it
     if (typeof window !== 'undefined') {
-      localStorage.setItem('moodfood_prefs', JSON.stringify(updated));
+      // Sanitize data before storing
+      const sanitizedPrefs = {
+        feeling: String(updated.feeling || '').substring(0, 50),
+        cuisine: String(updated.cuisine || '').substring(0, 50),
+        budget: String(updated.budget || '').substring(0, 20),
+        distance: String(updated.distance || '').substring(0, 30),
+        diet: String(updated.diet || '').substring(0, 30),
+        adventurousness: String(updated.adventurousness || '').substring(0, 50),
+        location: String(updated.location || '').substring(0, 100),
+        spicy: String(updated.spicy || '').substring(0, 20),
+      };
+      localStorage.setItem('moodzera_prefs', JSON.stringify(sanitizedPrefs));
     }
     setModalOpen(false);
     setSurveySubmitted(true);
@@ -107,14 +118,14 @@ export default function LandingPage() {
           <div className="text-center mb-8">
             {/* Logo */}
             <div className="flex justify-center mb-4">
-                          <Image
-              src="/logo.svg"
-              alt="Mood Food Logo"
-              width={140}
-              height={50}
-            />
+              <Image
+                src="/logo.svg"
+                alt="MOODZERA Logo"
+                width={200}
+                height={80}
+              />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Mood Food Chat</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">MOODZERA Chat</h1>
             <p className="text-gray-600">Let&apos;s find your perfect meal!</p>
           </div>
           
@@ -146,9 +157,9 @@ export default function LandingPage() {
             <div className="flex justify-center mb-8">
               <Image
                 src="/logo.svg"
-                alt="Mood Food Logo"
-                width={140}
-                height={50}
+                alt="MOODZERA Logo"
+                width={200}
+                height={80}
                 className="animate-fade-in"
               />
             </div>
@@ -200,7 +211,7 @@ export default function LandingPage() {
       <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose Mood Food?</h2>
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose MOODZERA?</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of food ordering with AI-powered mood analysis</p>
           </div>
           
@@ -268,7 +279,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-600">© 2024 Mood Food. Made with ❤️ for food lovers everywhere.</p>
+          <p className="text-gray-600">© 2024 MOODZERA. Made with ❤️ for food lovers everywhere.</p>
         </div>
       </footer>
 
