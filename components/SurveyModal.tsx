@@ -115,51 +115,60 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800">How are you feeling?</h2>
+        <div className="p-8 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800">How are you feeling?</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
             >
-              ✕
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
-          <div className="mt-2">
-            <div className="flex space-x-2">
+          <div className="mb-6">
+            <div className="flex space-x-3">
               {[1, 2, 3, 4, 5, 6].map((stepNum) => (
                 <div
                   key={stepNum}
-                  className={`h-2 flex-1 rounded-full ${
-                    stepNum <= step ? 'bg-blue-500' : 'bg-gray-200'
+                  className={`h-3 flex-1 rounded-full transition-all duration-300 ${
+                    stepNum < step 
+                      ? 'bg-green-500' 
+                      : stepNum === step 
+                        ? 'bg-green-400' 
+                        : 'bg-gray-200'
                   }`}
                 />
               ))}
+            </div>
+            <div className="mt-2 text-sm text-gray-500">
+              Step {step} of 6
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-8">
           {step === 1 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">What&apos;s your mood today?</h3>
-              <div className="space-y-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">What&apos;s your mood today?</h3>
+              <div className="space-y-4">
                 {feelingOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('feeling', option.value)}
-                    className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                    className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.feeling === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
-                    <div className="text-lg font-medium">{option.label}</div>
-                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                    <div className="text-xl font-medium">{option.label}</div>
+                    <div className="text-sm text-gray-600 mt-2">{option.description}</div>
                   </button>
                 ))}
               </div>
@@ -167,20 +176,20 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           )}
 
           {step === 2 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">What cuisine do you prefer?</h3>
-              <div className="grid grid-cols-2 gap-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">What cuisine do you prefer?</h3>
+              <div className="grid grid-cols-2 gap-4">
                 {cuisineOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('cuisine', option.value)}
-                    className={`p-3 rounded-xl border-2 text-center transition-all duration-200 ${
+                    className={`p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.cuisine === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
-                    <div className="text-lg">{option.label}</div>
+                    <div className="text-lg font-medium">{option.label}</div>
                   </button>
                 ))}
               </div>
@@ -188,17 +197,17 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           )}
 
           {step === 3 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">How far are you willing to travel?</h3>
-              <div className="space-y-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">How far are you willing to travel?</h3>
+              <div className="space-y-4">
                 {distanceOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('distance', option.value)}
-                    className={`w-full p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.distance === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -209,17 +218,17 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           )}
 
           {step === 4 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Any dietary restrictions?</h3>
-              <div className="space-y-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">Any dietary restrictions?</h3>
+              <div className="space-y-4">
                 {dietOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('diet', option.value)}
-                    className={`w-full p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.diet === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -230,21 +239,21 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           )}
 
           {step === 5 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">How adventurous are you with food?</h3>
-              <div className="space-y-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">How adventurous are you with food?</h3>
+              <div className="space-y-4">
                 {adventurousnessOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('adventurousness', option.value)}
-                    className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                    className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.adventurousness === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
-                    <div className="text-sm text-gray-600 mt-1">{option.description}</div>
+                    <div className="text-sm text-gray-600 mt-2">{option.description}</div>
                   </button>
                 ))}
               </div>
@@ -252,17 +261,17 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           )}
 
           {step === 6 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">How spicy do you like your food?</h3>
-              <div className="space-y-3">
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">How spicy do you like your food?</h3>
+              <div className="space-y-4">
                 {spicyOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => updatePrefs('spicy', option.value)}
-                    className={`w-full p-4 rounded-xl border-2 text-center transition-all duration-200 ${
+                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.spicy === option.value
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -274,30 +283,32 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 flex justify-between">
-          {step > 1 && (
+        <div className="p-8 border-t border-gray-100 bg-gray-50 rounded-b-3xl">
+          <div className="flex justify-between items-center">
+            {step > 1 && (
+              <button
+                onClick={handleBack}
+                className="px-8 py-3 text-gray-600 hover:text-gray-800 transition-colors font-medium"
+              >
+                ← Back
+              </button>
+            )}
+            <div className="flex-1" />
             <button
-              onClick={handleBack}
-              className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              onClick={handleNext}
+              disabled={
+                (step === 1 && !currentPrefs.feeling) ||
+                (step === 2 && !currentPrefs.cuisine) ||
+                (step === 3 && !currentPrefs.distance) ||
+                (step === 4 && !currentPrefs.diet) ||
+                (step === 5 && !currentPrefs.adventurousness) ||
+                (step === 6 && !currentPrefs.spicy)
+              }
+              className="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Back
+              {step === 6 ? 'Get Recipes 🍽️' : 'Next →'}
             </button>
-          )}
-          <div className="flex-1" />
-          <button
-            onClick={handleNext}
-            disabled={
-              (step === 1 && !currentPrefs.feeling) ||
-              (step === 2 && !currentPrefs.cuisine) ||
-              (step === 3 && !currentPrefs.distance) ||
-              (step === 4 && !currentPrefs.diet) ||
-              (step === 5 && !currentPrefs.adventurousness) ||
-              (step === 6 && !currentPrefs.spicy)
-            }
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {step === 6 ? 'Get Recipes' : 'Next'}
-          </button>
+          </div>
         </div>
       </div>
     </div>
