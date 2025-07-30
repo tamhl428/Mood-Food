@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Prefs } from './SurveyModal';
+import { useRouter } from 'next/router';
 
 // Render Markdown bold (**text**) as <strong>
 function renderMarkdown(message: string) {
@@ -47,6 +48,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   } | null>(null);
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -95,6 +97,10 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       setLoading(false);
     }
     setInput('');
+  };
+
+  const handleGetRecipes = () => {
+    router.push('/recipes');
   };
 
   return (
@@ -157,23 +163,22 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
                   <div style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>
                     {youtubeVideo.title}
                   </div>
-                  <a
-                    href={youtubeVideo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={handleGetRecipes}
                     style={{
                       display: 'inline-block',
                       padding: '6px 16px',
                       borderRadius: 4,
                       background: '#ff0000',
                       color: '#fff',
-                      textDecoration: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
                       fontSize: 14,
                       fontWeight: 500
                     }}
                   >
-                    Watch Recipe 🎥
-                  </a>
+                    Get Recipes 🎥
+                  </button>
                 </div>
               )}
             </div>
