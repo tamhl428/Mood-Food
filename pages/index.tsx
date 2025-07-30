@@ -133,146 +133,134 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Background Animation */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 to-indigo-100/30" />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <div className="text-center">
-            {/* Logo */}
-            <div className="flex justify-center mb-8">
-              <Image
-                src="/logo.svg"
-                alt="MOODZERA Logo"
-                width={200}
-                height={80}
-                className="animate-fade-in"
-              />
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        {/* Hero Section */}
+        <section className="pt-20 pb-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="animate-bounce-subtle">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  MOODZERA
+                </span>
+              </h1>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6 animate-fade-in">
-              Cook the Right Thing
-              <br />
-              at the Right Time
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay">
-              Tell us how you feel. We&apos;ll help you find the perfect recipe that matches your vibe.
+            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Your mood, your recipe. AI-powered recipe suggestions that match exactly how you&apos;re feeling.
             </p>
             <button
               onClick={handleGetStarted}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-bounce-subtle"
+              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              Get Started →
+              Get Started
             </button>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Three simple steps to your perfect recipe</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {howItWorks.map((item, index) => (
-              <div
-                key={index}
-                className="text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-2"
-              >
-                <div className="text-6xl mb-4 hover:scale-110 transition-transform duration-300">
-                  {item.icon}
-                </div>
-                <div className="text-2xl font-bold text-blue-600 mb-2">{item.step}</div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose MOODZERA?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of recipe discovery with AI-powered mood analysis</p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Real stories from people who found their perfect mood-recipe match</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="text-3xl mr-3">{testimonial.avatar}</div>
-                  <div>
-                    <div className="font-semibold text-gray-800">{testimonial.name}</div>
-                    <div className="text-yellow-500">{testimonial.rating}</div>
+        {/* How It Works Section */}
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Three simple steps to your perfect mood-based recipe</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {howItWorks.map((item, index) => (
+                <div
+                  key={index}
+                  className="text-center p-8 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="text-6xl mb-4 hover:scale-110 transition-transform duration-300">
+                    {item.icon}
                   </div>
+                  <div className="text-2xl font-bold text-blue-600 mb-2">{item.step}</div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">{item.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
                 </div>
-                <p className="text-gray-700 italic leading-relaxed">&quot;{testimonial.quote}&quot;</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            What&apos;s Your Mood Today?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of users who&apos;ve discovered the perfect recipe for every emotion
-          </p>
-          <button
-            onClick={handleGetStarted}
-            className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-          >
-            Start Now
-          </button>
-        </div>
-      </section>
+        {/* Features Section */}
+        <section className="py-20 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose MOODZERA?</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of recipe discovery with AI-powered mood analysis</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
+                >
+                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-600">© 2024 MOODZERA. Made with ❤️ for food lovers everywhere.</p>
-        </div>
-      </footer>
+        {/* Testimonials Section */}
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Real stories from people who found their perfect mood-recipe match</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl border border-blue-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="text-3xl mr-3">{testimonial.avatar}</div>
+                    <div>
+                      <div className="font-semibold text-gray-800">{testimonial.name}</div>
+                      <div className="text-yellow-500">{testimonial.rating}</div>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 italic leading-relaxed">&quot;{testimonial.quote}&quot;</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
+        {/* Final CTA Section */}
+        <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              What&apos;s Your Mood Today?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who&apos;ve discovered the perfect recipe for every emotion
+            </p>
+            <button
+              onClick={handleGetStarted}
+              className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              Start Now
+            </button>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-12 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-gray-600">© 2024 MOODZERA. Made with ❤️ for food lovers everywhere.</p>
+          </div>
+        </footer>
+      </div>
+
+      {/* Survey Modal - rendered at root level */}
       {modalOpen && (
         <SurveyModal
           open={modalOpen}
@@ -281,6 +269,6 @@ export default function LandingPage() {
           onClose={() => setModalOpen(false)}
         />
       )}
-    </div>
+    </>
   );
 }
