@@ -1,0 +1,5 @@
+[33m669f340[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix lint errors and TypeScript issues - Remove unused error variable in locations.tsx - Add missing dependency prefs.cuisine to useEffect in Chat.tsx - Fix TypeScript error in useUserLocation hook cleanup function - All lint warnings and build errors resolved
+[33md6285d3[m Add useUserLocation React hook - Create comprehensive geolocation hook with error handling - Add LocationExample component for demonstration - Include detailed documentation and usage examples - Handle permission denied, timeout, and position unavailable errors
+[33m247798d[m Fix TypeScript linting errors - Replace any types with proper type definitions in API files
+[33medee1b8[m Add app logo and fix food suggestions - Add modern SVG logo with animations - Fix AI suggestions to respect cuisine preferences - Enhance Yelp API with fallback to mock data - Improve restaurant suggestions for all locations
+[33m777128a[m Fix location not being saved from survey to localStorage

@@ -1,44 +1,34 @@
 import React, { useState } from 'react';
-import SurveyModal, { Prefs } from '../components/SurveyModal';
+import MoodModal, { MoodPrefs } from '../components/MoodModal';
 import Chat from '../components/Chat';
 import Image from 'next/image';
 
-const defaultPrefs: Prefs = {
+const defaultPrefs: MoodPrefs = {
   feeling: '',
   cuisine: '',
-  budget: '',
-  distance: '',
-  diet: '',
-  adventurousness: '',
-  location: '',
   spicy: '',
 };
 
 export default function LandingPage() {
-  const [prefs, setPrefs] = useState<Prefs>(defaultPrefs);
+  const [prefs, setPrefs] = useState<MoodPrefs>(defaultPrefs);
   const [modalOpen, setModalOpen] = useState(false);
-  const [surveySubmitted, setSurveySubmitted] = useState(false);
+  const [moodSubmitted, setMoodSubmitted] = useState(false);
   const [showChat, setShowChat] = useState(false);
 
-  const handleSurveySave = (updated: Prefs) => {
+  const handleMoodSave = (updated: MoodPrefs) => {
     setPrefs(updated);
-    // Save to localStorage so the locations page can access it
+    // Save to localStorage so the chat can access it
     if (typeof window !== 'undefined') {
       // Sanitize data before storing
       const sanitizedPrefs = {
         feeling: String(updated.feeling || '').substring(0, 50),
         cuisine: String(updated.cuisine || '').substring(0, 50),
-        budget: String(updated.budget || '').substring(0, 20),
-        distance: String(updated.distance || '').substring(0, 30),
-        diet: String(updated.diet || '').substring(0, 30),
-        adventurousness: String(updated.adventurousness || '').substring(0, 50),
-        location: String(updated.location || '').substring(0, 100),
         spicy: String(updated.spicy || '').substring(0, 20),
       };
       localStorage.setItem('moodzera_prefs', JSON.stringify(sanitizedPrefs));
     }
     setModalOpen(false);
-    setSurveySubmitted(true);
+    setMoodSubmitted(true);
     setShowChat(true);
   };
 
@@ -50,22 +40,22 @@ export default function LandingPage() {
     {
       icon: "🧠",
       title: "AI-Powered Mood Analysis",
-      description: "Our intelligent system understands your emotions and suggests the perfect meal."
+      description: "Our intelligent system understands your emotions and suggests the perfect recipe."
     },
     {
       icon: "💬",
       title: "Fun Chat Interface",
-      description: "Engage in natural conversation with our food concierge - no searching required."
+      description: "Engage in natural conversation with our recipe concierge - no searching required."
     },
     {
       icon: "🎯",
       title: "Personalized Recommendations",
-      description: "Get suggestions tailored to your mood, preferences, and dietary needs."
+      description: "Get recipe suggestions tailored to your mood, preferences, and dietary needs."
     },
     {
-      icon: "🚀",
-      title: "Instant Ordering",
-      description: "From suggestion to order in seconds with seamless restaurant integration."
+      icon: "🎥",
+      title: "YouTube Recipe Videos",
+      description: "Watch step-by-step cooking videos for every suggested recipe."
     }
   ];
 
@@ -80,13 +70,13 @@ export default function LandingPage() {
       step: "2", 
       icon: "🤖",
       title: "Get AI suggestions",
-      description: "Our intelligent system analyzes your mood and suggests the perfect dishes."
+      description: "Our intelligent system analyzes your mood and suggests the perfect recipes."
     },
     {
       step: "3",
       icon: "🍽️",
-      title: "Order and enjoy",
-      description: "Browse restaurants, place your order, and enjoy your mood-perfect meal."
+      title: "Watch and cook",
+      description: "Get YouTube recipe videos and cook your mood-perfect meal at home."
     }
   ];
 
@@ -94,19 +84,19 @@ export default function LandingPage() {
     {
       avatar: "👩‍💼",
       name: "Sarah K.",
-      quote: "Got me the perfect comfort food for my breakup 😭❤️",
+      quote: "Got me the perfect comfort food recipe for my breakup 😭❤️",
       rating: "⭐⭐⭐⭐⭐"
     },
     {
       avatar: "👨‍💻",
       name: "Mike R.",
-      quote: "The AI actually understood my stress and suggested the perfect calming meal!",
+      quote: "The AI actually understood my stress and suggested the perfect calming recipe!",
       rating: "⭐⭐⭐⭐⭐"
     },
     {
       avatar: "👩‍🎨",
       name: "Emma L.",
-      quote: "Finally, an app that gets my mood! No more endless scrolling through menus.",
+      quote: "Finally, an app that gets my mood! No more endless scrolling through recipe sites.",
       rating: "⭐⭐⭐⭐⭐"
     }
   ];
@@ -126,17 +116,17 @@ export default function LandingPage() {
               />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">MOODZERA Chat</h1>
-            <p className="text-gray-600">Let&apos;s find your perfect meal!</p>
+            <p className="text-gray-600">Let&apos;s find your perfect recipe!</p>
           </div>
           
-          <SurveyModal
+          <MoodModal
             open={modalOpen}
             prefs={prefs}
-            onSave={handleSurveySave}
+            onSave={handleMoodSave}
             onClose={() => setModalOpen(false)}
           />
           
-          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
+          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={moodSubmitted} />}
         </div>
       </div>
     );
@@ -164,12 +154,12 @@ export default function LandingPage() {
               />
             </div>
             <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-6 animate-fade-in">
-              Crave the Right Thing
+              Cook the Right Thing
               <br />
               at the Right Time
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay">
-              Tell us how you feel. We&apos;ll help you order the food that matches your vibe.
+              Tell us how you feel. We&apos;ll help you find the perfect recipe that matches your vibe.
             </p>
             <button
               onClick={handleGetStarted}
@@ -186,7 +176,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Three simple steps to your perfect meal</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Three simple steps to your perfect recipe</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -212,7 +202,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">Why Choose MOODZERA?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of food ordering with AI-powered mood analysis</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Experience the future of recipe discovery with AI-powered mood analysis</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -235,7 +225,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">What Our Users Say</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Real stories from people who found their perfect mood-food match</p>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Real stories from people who found their perfect mood-recipe match</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -261,12 +251,12 @@ export default function LandingPage() {
       {/* Final CTA Section */}
       <section className="py-20 bg-gradient-to-br from-blue-600 to-indigo-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                      <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              What&apos;s Your Mood Today?
-            </h2>
-                      <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who&apos;ve discovered the perfect meal for every emotion
-            </p>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            What&apos;s Your Mood Today?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of users who&apos;ve discovered the perfect recipe for every emotion
+          </p>
           <button
             onClick={handleGetStarted}
             className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -283,10 +273,10 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      <SurveyModal
+      <MoodModal
         open={modalOpen}
         prefs={prefs}
-        onSave={handleSurveySave}
+        onSave={handleMoodSave}
         onClose={() => setModalOpen(false)}
       />
     </div>

@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import type { Prefs } from './SurveyModal';
-import { useRouter } from 'next/router';
-
-// Helper to parse bolded dish name from AI message
-function extractDishFromMarkdown(message: string): string | null {
-  const match = message.match(/\*\*(.+?)\*\*/);
-  return match ? match[1] : null;
-}
+import type { MoodPrefs } from './MoodModal';
 
 // Render Markdown bold (**text**) as <strong>
 function renderMarkdown(message: string) {
@@ -20,33 +13,46 @@ function renderMarkdown(message: string) {
   });
 }
 
-// Fetch an AI suggestion from OpenAI via our secure API route
-async function fetchAISuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<string> {
-  const response = await fetch('/api/ai-suggest', {
+// Fetch a recipe suggestion from OpenAI via our secure API route
+async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<{
+  aiMessage: string;
+  recipe: string;
+  youtubeQuery: string;
+  youtubeVideo?: {
+    title: string;
+    videoId: string;
+    url: string;
+  };
+}> {
+  const response = await fetch('/api/recipe-suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userMessage: userMsg, spicy, cuisine, mode }),
   });
-  if (!response.ok) throw new Error('Failed to get AI suggestion');
+  if (!response.ok) throw new Error('Failed to get recipe suggestion');
   const data = await response.json();
   if (data.error) throw new Error(data.error);
-  return data.aiMessage;
+  return data;
 }
 
-export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: Prefs; triggerInitialMessage?: boolean }) {
+export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: MoodPrefs; triggerInitialMessage?: boolean }) {
   const [messages, setMessages] = useState<{ sender: 'user' | 'ai'; text: string }[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [dish, setDish] = useState<string | null>(null);
+  const [recipe, setRecipe] = useState<string | null>(null);
+  const [youtubeVideo, setYoutubeVideo] = useState<{
+    title: string;
+    videoId: string;
+    url: string;
+  } | null>(null);
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading, dish]);
+  }, [messages, loading, recipe]);
 
-  // Trigger initial AI message when survey is submitted
+  // Trigger initial AI message when mood is submitted
   useEffect(() => {
     if (triggerInitialMessage && !hasTriggeredInitial && prefs.feeling) {
       setHasTriggeredInitial(true);
@@ -55,9 +61,9 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       const initialMessage = `I'm feeling ${prefs.feeling} today.`;
       setMessages([{ sender: 'user', text: initialMessage }]);
       
-      fetchAISuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial')
-        .then(aiMessage => {
-          setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
+      fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial')
+        .then(data => {
+          setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
         })
         .catch(err => {
           const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -69,21 +75,22 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     }
   }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine]);
 
-  // User sends a message, get AI suggestion, extract dish, and update chat
+  // User sends a message, get AI suggestion, extract recipe, and update chat
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
     setMessages(msgs => [...msgs, { sender: 'user', text: input }]);
     setLoading(true);
     try {
-      const aiMessage = await fetchAISuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion');
-      setMessages(msgs => [...msgs, { sender: 'ai', text: aiMessage }]);
-      const extracted = extractDishFromMarkdown(aiMessage);
-      setDish(extracted);
+      const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion');
+      setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
+      setRecipe(data.recipe);
+      setYoutubeVideo(data.youtubeVideo || null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setMessages(msgs => [...msgs, { sender: 'ai', text: `Sorry, I couldn't process that. ${errorMessage}` }]);
-      setDish(null);
+      setRecipe(null);
+      setYoutubeVideo(null);
     } finally {
       setLoading(false);
     }
@@ -132,28 +139,48 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
         )}
         <div ref={chatEndRef} />
       </div>
-      {/* Dish Card and Yelp Results */}
-      {dish && (
+      
+      {/* Recipe Card and YouTube Video */}
+      {recipe && (
         <div style={{
           border: '1px solid #e0e0e0', borderRadius: 8, background: '#f6fff6', padding: 12, marginBottom: 12
         }}>
-          <strong>Dish Suggestion:</strong>
+          <strong>Recipe Suggestion:</strong>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '16px 0' }}>
             <div style={{ width: 56, height: 56, background: '#eee', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
               🍽️
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600, fontSize: 18 }}>{dish}</div>
-              <button
-                style={{ marginTop: 8, padding: '6px 16px', borderRadius: 4, background: '#1976d2', color: '#fff', border: 'none', cursor: 'pointer' }}
-                onClick={() => router.push(`/locations?dish=${encodeURIComponent(dish)}`)}
-              >
-                Order Now
-              </button>
+              <div style={{ fontWeight: 600, fontSize: 18 }}>{recipe}</div>
+              {youtubeVideo && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>
+                    {youtubeVideo.title}
+                  </div>
+                  <a
+                    href={youtubeVideo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-block',
+                      padding: '6px 16px',
+                      borderRadius: 4,
+                      background: '#ff0000',
+                      color: '#fff',
+                      textDecoration: 'none',
+                      fontSize: 14,
+                      fontWeight: 500
+                    }}
+                  >
+                    Watch Recipe 🎥
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+      
       <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
         <input
           type="text"
