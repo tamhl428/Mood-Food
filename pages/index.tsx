@@ -125,14 +125,7 @@ export default function LandingPage() {
             <p className="text-gray-600">Let&apos;s find your perfect recipe!</p>
           </div>
           
-          <SurveyModal
-            open={modalOpen}
-            prefs={prefs}
-            onSave={handleSurveySave}
-            onClose={() => setModalOpen(false)}
-          />
-          
-          {!modalOpen && <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />}
+          <Chat prefs={prefs} triggerInitialMessage={surveySubmitted} />
         </div>
       </div>
     );
