@@ -137,9 +137,9 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                   key={stepNum}
                   className={`h-3 flex-1 rounded-full transition-all duration-300 ${
                     stepNum < step 
-                      ? 'bg-green-500' 
+                      ? 'bg-blue-500' 
                       : stepNum === step 
-                        ? 'bg-green-400' 
+                        ? 'bg-blue-400' 
                         : 'bg-gray-200'
                   }`}
                 />
@@ -163,8 +163,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('feeling', option.value)}
                     className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.feeling === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-xl font-medium">{option.label}</div>
@@ -185,8 +185,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('cuisine', option.value)}
                     className={`p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.cuisine === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -206,8 +206,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('distance', option.value)}
                     className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.distance === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -227,8 +227,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('diet', option.value)}
                     className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.diet === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -248,8 +248,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('adventurousness', option.value)}
                     className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.adventurousness === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -270,8 +270,8 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                     onClick={() => updatePrefs('spicy', option.value)}
                     className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
                       currentPrefs.spicy === option.value
-                        ? 'border-green-500 bg-green-50 shadow-lg'
-                        : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
                     }`}
                   >
                     <div className="text-lg font-medium">{option.label}</div>
@@ -304,7 +304,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                 (step === 5 && !currentPrefs.adventurousness) ||
                 (step === 6 && !currentPrefs.spicy)
               }
-              className="px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               {step === 6 ? 'Get Recipes 🍽️' : 'Next →'}
             </button>

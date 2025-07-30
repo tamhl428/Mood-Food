@@ -63,8 +63,8 @@ body {
 .rounded-full { border-radius: 9999px; }
 .transition-all { transition-property: all; }
 .duration-300 { transition-duration: 300ms; }
-.bg-green-500 { background-color: #10b981; }
-.bg-green-400 { background-color: #34d399; }
+.bg-blue-500 { background-color: #3b82f6; }
+.bg-blue-400 { background-color: #60a5fa; }
 .bg-gray-200 { background-color: #e5e7eb; }
 .mt-2 { margin-top: 0.5rem; }
 .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
@@ -85,12 +85,12 @@ body {
 .duration-300 { transition-duration: 300ms; }
 .transform { transform: translateZ(0); }
 .hover\:scale-105:hover { transform: scale(1.05); }
-.border-green-500 { border-color: #10b981; }
-.bg-green-50 { background-color: #f0fdf4; }
+.border-blue-500 { border-color: #3b82f6; }
+.bg-blue-50 { background-color: #eff6ff; }
 .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
 .border-gray-200 { border-color: #e5e7eb; }
-.hover\:border-green-300:hover { border-color: #86efac; }
-.hover\:bg-green-50:hover { background-color: #f0fdf4; }
+.hover\:border-blue-300:hover { border-color: #93c5fd; }
+.hover\:bg-blue-50:hover { background-color: #eff6ff; }
 .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
 .font-medium { font-weight: 500; }
 .text-gray-600 { color: #4b5563; }
@@ -115,14 +115,14 @@ body {
 .hover\:text-gray-800:hover { color: #1f2937; }
 .font-medium { font-weight: 500; }
 .flex-1 { flex: 1 1 0%; }
-.bg-gradient-to-r { background: linear-gradient(to right, #10b981, #059669); }
-.from-green-500 { background: linear-gradient(to right, #10b981, #059669); }
-.to-green-600 { background: linear-gradient(to right, #10b981, #059669); }
+.bg-gradient-to-r { background: linear-gradient(to right, #3b82f6, #2563eb); }
+.from-blue-500 { background: linear-gradient(to right, #3b82f6, #2563eb); }
+.to-blue-600 { background: linear-gradient(to right, #3b82f6, #2563eb); }
 .text-white { color: #ffffff; }
 .rounded-xl { border-radius: 0.75rem; }
 .font-semibold { font-weight: 600; }
-.hover\:from-green-600:hover { background: linear-gradient(to right, #059669, #047857); }
-.hover\:to-green-700:hover { background: linear-gradient(to right, #059669, #047857); }
+.hover\:from-blue-600:hover { background: linear-gradient(to right, #2563eb, #1d4ed8); }
+.hover\:to-blue-700:hover { background: linear-gradient(to right, #2563eb, #1d4ed8); }
 .disabled\:opacity-50:disabled { opacity: 0.5; }
 .disabled\:cursor-not-allowed:disabled { cursor: not-allowed; }
 .hover\:scale-105:hover { transform: scale(1.05); }
