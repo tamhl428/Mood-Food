@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 export interface Prefs {
   feeling: string;
   cuisine: string;
-  distance: string;
   diet: string;
   adventurousness: string;
   spicy: string;
@@ -45,14 +44,6 @@ const cuisineOptions = [
   { value: 'Other', label: 'Other 🌍' },
 ];
 
-const distanceOptions = [
-  { value: '0-1', label: '0-1 mile' },
-  { value: '1-3', label: '1-3 miles' },
-  { value: '3-5', label: '3-5 miles' },
-  { value: '5-10', label: '5-10 miles' },
-  { value: '10+', label: '10+ miles' },
-];
-
 const dietOptions = [
   { value: 'None', label: 'No restrictions' },
   { value: 'Vegetarian', label: 'Vegetarian 🌱' },
@@ -86,7 +77,6 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
     const sanitizedPrefs = {
       feeling: String(currentPrefs.feeling || '').substring(0, 50),
       cuisine: String(currentPrefs.cuisine || '').substring(0, 50),
-      distance: String(currentPrefs.distance || '').substring(0, 30),
       diet: String(currentPrefs.diet || '').substring(0, 30),
       adventurousness: String(currentPrefs.adventurousness || '').substring(0, 50),
       spicy: String(currentPrefs.spicy || '').substring(0, 20),
@@ -132,7 +122,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           </div>
           <div className="mb-6">
             <div className="flex space-x-3">
-              {[1, 2, 3, 4, 5, 6].map((stepNum) => (
+              {[1, 2, 3, 4, 5].map((stepNum) => (
                 <div
                   key={stepNum}
                   className={`h-3 flex-1 rounded-full transition-all duration-300 ${
@@ -146,7 +136,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
               ))}
             </div>
             <div className="mt-2 text-sm text-gray-500">
-              Step {step} of 6
+              Step {step} of 5
             </div>
           </div>
         </div>
@@ -198,27 +188,6 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
 
           {step === 3 && (
             <div className="animate-fade-in">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">How far are you willing to travel?</h3>
-              <div className="space-y-4">
-                {distanceOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('distance', option.value)}
-                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.distance === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-lg font-medium">{option.label}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Any dietary restrictions?</h3>
               <div className="space-y-4">
                 {dietOptions.map((option) => (
@@ -238,7 +207,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
             </div>
           )}
 
-          {step === 5 && (
+          {step === 4 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">How adventurous are you with food?</h3>
               <div className="space-y-4">
@@ -260,7 +229,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
             </div>
           )}
 
-          {step === 6 && (
+          {step === 5 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">How spicy do you like your food?</h3>
               <div className="space-y-4">
@@ -299,14 +268,13 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
               disabled={
                 (step === 1 && !currentPrefs.feeling) ||
                 (step === 2 && !currentPrefs.cuisine) ||
-                (step === 3 && !currentPrefs.distance) ||
-                (step === 4 && !currentPrefs.diet) ||
-                (step === 5 && !currentPrefs.adventurousness) ||
-                (step === 6 && !currentPrefs.spicy)
+                (step === 3 && !currentPrefs.diet) ||
+                (step === 4 && !currentPrefs.adventurousness) ||
+                (step === 5 && !currentPrefs.spicy)
               }
               className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              {step === 6 ? 'Get Recipes 🍽️' : 'Next →'}
+              {step === 5 ? 'Get Recipes 🍽️' : 'Next →'}
             </button>
           </div>
         </div>

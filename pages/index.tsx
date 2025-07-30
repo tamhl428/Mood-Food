@@ -6,7 +6,6 @@ import Image from 'next/image';
 const defaultPrefs: Prefs = {
   feeling: '',
   cuisine: '',
-  distance: '',
   diet: '',
   adventurousness: '',
   spicy: '',
@@ -26,7 +25,6 @@ export default function LandingPage() {
       const sanitizedPrefs = {
         feeling: String(updated.feeling || '').substring(0, 50),
         cuisine: String(updated.cuisine || '').substring(0, 50),
-        distance: String(updated.distance || '').substring(0, 30),
         diet: String(updated.diet || '').substring(0, 30),
         adventurousness: String(updated.adventurousness || '').substring(0, 50),
         spicy: String(updated.spicy || '').substring(0, 20),
