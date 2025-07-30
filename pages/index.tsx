@@ -39,6 +39,7 @@ export default function LandingPage() {
   };
 
   const handleGetStarted = () => {
+    console.log('Get Started clicked, setting modalOpen to true');
     setModalOpen(true);
   };
 
@@ -272,12 +273,14 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      <SurveyModal
-        open={modalOpen}
-        prefs={prefs}
-        onSave={handleSurveySave}
-        onClose={() => setModalOpen(false)}
-      />
+      {modalOpen && (
+        <SurveyModal
+          open={modalOpen}
+          prefs={prefs}
+          onSave={handleSurveySave}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
