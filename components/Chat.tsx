@@ -71,11 +71,11 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
 
   // Trigger initial AI message when survey is submitted
   useEffect(() => {
-    if (triggerInitialMessage && !hasTriggeredInitial && prefs.feeling) {
+    if (triggerInitialMessage && !hasTriggeredInitial && prefs.cuisine) {
       setHasTriggeredInitial(true);
       setLoading(true);
       
-      const initialMessage = `I'm feeling ${prefs.feeling} today.`;
+      const initialMessage = `I'm in the mood for ${prefs.cuisine} cuisine.`;
       setMessages([{ sender: 'user', text: initialMessage }]);
       
       fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
@@ -90,7 +90,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
           setLoading(false);
         });
     }
-  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine, sessionId]);
+  }, [triggerInitialMessage, hasTriggeredInitial, prefs.cuisine, prefs.spicy, sessionId]);
 
   // User sends a message, get AI suggestion, extract recipe, and update chat
   const sendMessage = async (e: React.FormEvent) => {
@@ -175,69 +175,127 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       {/* Recipe Card */}
       {recipe && (
         <div style={{
-          border: '1px solid #e0e0e0', borderRadius: 12, background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 
-          padding: 20, marginBottom: 16, boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+          border: '1px solid #e5e7eb',
+          borderRadius: 16,
+          background: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)',
+          padding: 24,
+          marginBottom: 20,
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+          {/* Decorative accent */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 4,
+            background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)'
+          }} />
+          
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
+            {/* Recipe Icon */}
             <div style={{ 
-              width: 60, height: 60, 
+              width: 72, 
+              height: 72, 
               background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', 
-              borderRadius: 12, 
+              borderRadius: 16, 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center', 
-              fontSize: 28,
+              fontSize: 32,
               color: 'white',
-              boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+              boxShadow: '0 8px 16px rgba(59, 130, 246, 0.25)',
+              flexShrink: 0
             }}>
               🍽️
             </div>
+            
+            {/* Recipe Content */}
             <div style={{ flex: 1 }}>
               <div style={{ 
-                fontWeight: 700, 
-                fontSize: 20, 
-                color: '#1e293b',
-                marginBottom: 8
+                fontWeight: 800, 
+                fontSize: 24, 
+                color: '#111827',
+                marginBottom: 8,
+                lineHeight: '1.2'
               }}>
                 {recipe}
               </div>
+              
               <div style={{ 
-                fontSize: 14, 
-                color: '#64748b',
-                marginBottom: 12,
-                lineHeight: '1.5'
+                fontSize: 15, 
+                color: '#6b7280',
+                marginBottom: 20,
+                lineHeight: '1.6'
               }}>
-                A perfect recipe suggestion based on your mood and preferences.
+                Perfectly crafted recipe suggestion based on your preferences and mood.
               </div>
-              <button
-                onClick={handleGetRecipes}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '10px 20px',
-                  borderRadius: 8,
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                  color: '#fff',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 8px rgba(59, 130, 246, 0.4)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(59, 130, 246, 0.3)';
-                }}
-              >
-                <span>📋</span>
-                <span>View Recipe Details</span>
-              </button>
+              
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={handleGetRecipes}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '12px 24px',
+                    borderRadius: 12,
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: 15,
+                    fontWeight: 600,
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                    transition: 'all 0.3s ease',
+                    minWidth: 140
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  <span>📋</span>
+                  <span>View Recipe</span>
+                </button>
+                
+                <button
+                  onClick={() => setRecipe('')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '12px 24px',
+                    borderRadius: 12,
+                    background: 'transparent',
+                    color: '#6b7280',
+                    border: '2px solid #e5e7eb',
+                    cursor: 'pointer',
+                    fontSize: 15,
+                    fontWeight: 500,
+                    transition: 'all 0.3s ease',
+                    minWidth: 120
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.color = '#374151';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderColor = '#e5e7eb';
+                    e.currentTarget.style.color = '#6b7280';
+                  }}
+                >
+                  <span>✕</span>
+                  <span>Dismiss</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
