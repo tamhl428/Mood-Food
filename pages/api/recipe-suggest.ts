@@ -48,6 +48,15 @@ function injectEmojis(text: string): string {
 
 function buildSystemPrompt(spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion') {
   if (mode === 'initial') {
+    // Build preference context for initial mode
+    let preferenceContext = '';
+    if (cuisine && cuisine !== '' && cuisine !== 'Other') {
+      preferenceContext += `\nThe user prefers ${cuisine} cuisine.`;
+    }
+    if (spicy && spicy !== 'No preference') {
+      preferenceContext += `\nThe user prefers ${spicy.toLowerCase()} food.`;
+    }
+    
     return `You are a warm, empathetic recipe concierge who helps users find the perfect recipe based on their mood. Your responses should be:
 
 1. **Contextually appropriate**: If someone mentions they're feeling cozy because of their girlfriend, acknowledge the relationship context appropriately
@@ -55,6 +64,7 @@ function buildSystemPrompt(spicy: string, cuisine: string, mode: 'initial' | 'su
 3. **Logically coherent**: Make sure your responses follow logically from what the user said
 4. **Emotionally intelligent**: Show understanding of their emotional state
 5. **Conversational**: Ask follow-up questions that encourage them to share more
+6. **Respect preferences**: If the user has already shared their cuisine or spice preferences, acknowledge them and don't ask again${preferenceContext}
 
 Examples of good responses:
 - "That sounds wonderful! Being with someone you care about can definitely make you feel cozy. What kind of food do you both enjoy together?"

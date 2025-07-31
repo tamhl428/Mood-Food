@@ -80,7 +80,11 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       setHasTriggeredInitial(true);
       setLoading(true);
       
-      const initialMessage = `I'm feeling ${prefs.feeling} today.`;
+      // Build initial message including cuisine preference if available
+      let initialMessage = `I'm feeling ${prefs.feeling} today.`;
+      if (prefs.cuisine && prefs.cuisine !== '') {
+        initialMessage += ` I prefer ${prefs.cuisine} cuisine.`;
+      }
       setMessages([{ sender: 'user', text: initialMessage }]);
       
       fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
