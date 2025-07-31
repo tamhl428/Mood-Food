@@ -58,12 +58,33 @@ export default function RecipesPage() {
       const recentSessionId = localStorage.getItem('moodzera_recent_session');
       if (recentSessionId) {
         setSessionId(recentSessionId);
+        // Fetch recipes immediately when session ID is set
+        fetchRecipesWithSession(recentSessionId);
       }
-      
-      // Don't set filters from survey - let the API handle filtering based on conversation
-      // The recipes should come from the current conversation session
     }
   }, []);
+
+  // Separate function to fetch recipes with session ID
+  const fetchRecipesWithSession = async (sessionId: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('sessionId', sessionId);
+      
+      const response = await fetch(`/api/get-recipes?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes');
+      }
+      
+      const data = await response.json();
+      setRecipes(data.recipes || []);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      setRecipes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch recipes from API
   const fetchRecipes = async () => {
@@ -216,53 +237,60 @@ export default function RecipesPage() {
             </div>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {recipes.map((recipe, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col h-full hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
               >
-                {/* Recipe Image Placeholder with Category Badge */}
-                <div className="relative bg-gradient-to-br from-blue-100 to-indigo-200 h-48 w-full flex items-center justify-center">
-                  <span className="text-6xl">🍽️</span>
-                  {/* Category Badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white">
+                {/* Recipe Header with Cuisine Badge */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+                  {/* Cuisine Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold bg-blue-500 text-white shadow-lg">
                       {recipe.cuisine.toUpperCase()}
                     </span>
+                  </div>
+                  
+                  {/* Recipe Title */}
+                  <div className="mt-8">
+                    <h3 className="text-2xl font-bold text-gray-900 leading-tight">{recipe.name}</h3>
                   </div>
                 </div>
                 
                 {/* Recipe Content */}
                 <div className="p-6 flex-1 flex flex-col">
-                  {/* Recipe Title */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">{recipe.name}</h3>
-                  
                   {/* Recipe Description */}
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-1">{recipe.description}</p>
+                  <div className="flex-1 mb-6">
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {recipe.description}
+                    </p>
+                  </div>
                   
-                  {/* Recipe Details Grid */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">DIFFICULTY</div>
-                      <div className="flex items-center justify-center">
+                  {/* Recipe Details */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500 font-medium">DIFFICULTY</span>
+                      <div className="flex items-center">
                         {renderDifficulty(recipe.difficulty)}
-                        <span className="ml-1 text-xs text-gray-700">{recipe.difficulty}</span>
+                        <span className="ml-2 text-sm font-medium text-gray-700">{recipe.difficulty}</span>
                       </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">TIME</div>
-                      <div className="text-sm font-medium text-gray-700">{recipe.time}</div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500 font-medium">TIME</span>
+                      <span className="text-sm font-medium text-gray-700">{recipe.time}</span>
                     </div>
                   </div>
                   
                   {/* Recipe Button */}
-                  <button
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
-                  >
-                    <span>📋</span>
-                    <span>View Recipe Details</span>
-                  </button>
+                  <div className="relative">
+                    <button
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl"
+                    >
+                      <span className="text-lg">📋</span>
+                      <span>View Recipe Details</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
