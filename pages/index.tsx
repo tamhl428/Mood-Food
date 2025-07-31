@@ -58,9 +58,9 @@ export default function LandingPage() {
       description: "Get recipe suggestions tailored to your mood, preferences, and dietary needs."
     },
     {
-      icon: "🎥",
-      title: "YouTube Recipe Videos",
-      description: "Watch step-by-step cooking videos for every suggested recipe."
+      icon: "📝",
+      title: "Detailed Recipe Instructions",
+      description: "Get comprehensive, step-by-step recipe instructions with ingredients and cooking tips."
     }
   ];
 
@@ -80,8 +80,8 @@ export default function LandingPage() {
     {
       step: "3",
       icon: "🍽️",
-      title: "Watch and cook",
-      description: "Get YouTube recipe videos and cook your mood-perfect meal at home."
+      title: "Cook and enjoy",
+      description: "Get detailed recipe instructions and cook your mood-perfect meal at home."
     }
   ];
 
@@ -148,7 +148,7 @@ export default function LandingPage() {
             </p>
             <button
               onClick={handleGetStarted}
-              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0"
             >
               Get Started
             </button>
@@ -243,7 +243,7 @@ export default function LandingPage() {
             </p>
             <button
               onClick={handleGetStarted}
-              className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-white text-blue-600 px-8 py-4 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0"
             >
               Start Now
             </button>

@@ -135,33 +135,71 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
         <div ref={chatEndRef} />
       </div>
       
-      {/* Recipe Card and YouTube Video */}
+      {/* Recipe Card */}
       {recipe && (
         <div style={{
-          border: '1px solid #e0e0e0', borderRadius: 8, background: '#f6fff6', padding: 12, marginBottom: 12
+          border: '1px solid #e0e0e0', borderRadius: 12, background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', 
+          padding: 20, marginBottom: 16, boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}>
-          <strong>Recipe Suggestion:</strong>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, margin: '16px 0' }}>
-            <div style={{ width: 56, height: 56, background: '#eee', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            <div style={{ 
+              width: 60, height: 60, 
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', 
+              borderRadius: 12, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: 28,
+              color: 'white',
+              boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+            }}>
               🍽️
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 600, fontSize: 18 }}>{recipe}</div>
+              <div style={{ 
+                fontWeight: 700, 
+                fontSize: 20, 
+                color: '#1e293b',
+                marginBottom: 8
+              }}>
+                {recipe}
+              </div>
+              <div style={{ 
+                fontSize: 14, 
+                color: '#64748b',
+                marginBottom: 12,
+                lineHeight: '1.5'
+              }}>
+                A perfect recipe suggestion based on your mood and preferences.
+              </div>
               <button
                 onClick={handleGetRecipes}
                 style={{
-                  display: 'inline-block',
-                  padding: '6px 16px',
-                  borderRadius: 4,
-                  background: '#ff0000',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 20px',
+                  borderRadius: 8,
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                   color: '#fff',
                   border: 'none',
                   cursor: 'pointer',
                   fontSize: 14,
-                  fontWeight: 500
+                  fontWeight: 600,
+                  boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 4px 8px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(59, 130, 246, 0.3)';
                 }}
               >
-                Get Recipes 🎥
+                <span>📋</span>
+                <span>View Recipe Details</span>
               </button>
             </div>
           </div>

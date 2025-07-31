@@ -244,8 +244,8 @@ export default function RecipesPage() {
                 <button
                   className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
                 >
-                  <span>🍽️</span>
-                  <span>View Recipe</span>
+                  <span>📋</span>
+                  <span>View Recipe Details</span>
                 </button>
               </div>
             ))}
