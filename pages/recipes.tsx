@@ -6,12 +6,6 @@ import Image from 'next/image';
 interface Recipe {
   name: string;
   description: string;
-  youtubeVideo: {
-    title: string;
-    videoId: string;
-    url: string;
-    thumbnail?: string;
-  };
   mood: string;
   cuisine: string;
   difficulty: string;
@@ -23,11 +17,6 @@ const mockRecipes: Recipe[] = [
   {
     name: "Chicken Noodle Soup",
     description: "A comforting bowl of homemade chicken noodle soup perfect for when you're feeling under the weather or need some warmth.",
-    youtubeVideo: {
-      title: "How to Make Chicken Noodle Soup",
-      videoId: "dQw4w9WgXcQ",
-      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    },
     mood: "sad",
     cuisine: "American",
     difficulty: "Easy",
@@ -36,11 +25,6 @@ const mockRecipes: Recipe[] = [
   {
     name: "Spicy Pad Thai",
     description: "A vibrant and flavorful Thai dish that's perfect for when you're feeling adventurous and want something exciting.",
-    youtubeVideo: {
-      title: "Authentic Pad Thai Recipe",
-      videoId: "dQw4w9WgXcQ",
-      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    },
     mood: "excited",
     cuisine: "Thai",
     difficulty: "Medium",
@@ -49,11 +33,6 @@ const mockRecipes: Recipe[] = [
   {
     name: "Chocolate Chip Cookies",
     description: "Warm, gooey chocolate chip cookies that bring comfort and joy - perfect for any mood!",
-    youtubeVideo: {
-      title: "Perfect Chocolate Chip Cookies",
-      videoId: "dQw4w9WgXcQ",
-      url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    },
     mood: "comfortable",
     cuisine: "American",
     difficulty: "Easy",
@@ -85,7 +64,7 @@ function SkeletonCard() {
       <div className="h-4 bg-gray-100 rounded w-1/2 mb-2" />
       <div className="h-4 bg-gray-100 rounded w-2/3 mb-3" />
       <div className="h-5 bg-gray-200 rounded w-1/3 mb-4" />
-      <div className="h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl w-full mt-auto" />
+      <div className="h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl w-full mt-auto" />
     </div>
   );
 }
@@ -132,11 +111,6 @@ export default function RecipesPage() {
       setLoading(false);
     }, 1000);
   }, [moodFilter, cuisineFilter]);
-
-  const handleRecipeClick = (recipe: Recipe) => {
-    // Open YouTube video in new tab
-    window.open(recipe.youtubeVideo.url, '_blank');
-  };
 
   const clearFilters = () => {
     setMoodFilter('');
@@ -266,13 +240,12 @@ export default function RecipesPage() {
                   </div>
                 </div>
                 
-                {/* Watch Recipe Button */}
+                {/* Recipe Button */}
                 <button
-                  onClick={() => handleRecipeClick(recipe)}
-                  className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-200 flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
                 >
-                  <span>🎥</span>
-                  <span>Watch Recipe</span>
+                  <span>🍽️</span>
+                  <span>View Recipe</span>
                 </button>
               </div>
             ))}

@@ -87,12 +87,6 @@ How about **Chicken Noodle Soup**?"
 type Data = {
   aiMessage: string;
   recipe: string;
-  youtubeQuery: string;
-  youtubeVideo?: {
-    title: string;
-    videoId: string;
-    url: string;
-  };
   error?: string;
 };
 
@@ -111,7 +105,7 @@ export default async function handler(
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Method not allowed' });
+    return res.status(405).json({ aiMessage: '', recipe: '', error: 'Method not allowed' });
   }
 
   // Rate limiting
@@ -119,14 +113,14 @@ export default async function handler(
   const ip = Array.isArray(clientIP) ? clientIP[0] : clientIP;
   
   if (!checkRateLimit(ip)) {
-    return res.status(429).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Too many requests. Please try again later.' });
+    return res.status(429).json({ aiMessage: '', recipe: '', error: 'Too many requests. Please try again later.' });
   }
 
   const { userMessage, spicy, cuisine, mode = 'suggestion' } = req.body;
 
   // Input validation and sanitization
   if (!userMessage || typeof userMessage !== 'string') {
-    return res.status(400).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'User message is required' });
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'User message is required' });
   }
 
   // Sanitize user input - remove potentially dangerous characters
@@ -136,12 +130,12 @@ export default async function handler(
     .substring(0, 1000); // Limit length
 
   if (!sanitizedUserMessage) {
-    return res.status(400).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'User message cannot be empty' });
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'User message cannot be empty' });
   }
 
   // Validate mode parameter
   if (mode !== 'initial' && mode !== 'suggestion') {
-    return res.status(400).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Invalid mode parameter' });
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'Invalid mode parameter' });
   }
 
   // Validate spicy and cuisine parameters
@@ -149,15 +143,15 @@ export default async function handler(
   const validCuisineOptions = ['Italian', 'Chinese', 'Indian', 'Mexican', 'American', 'Japanese', 'Thai', 'Mediterranean', 'French', 'Korean', 'Vietnamese', 'Greek', 'Other'];
   
   if (spicy && !validSpicyOptions.includes(spicy)) {
-    return res.status(400).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Invalid spicy preference' });
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'Invalid spicy preference' });
   }
 
   if (cuisine && !validCuisineOptions.includes(cuisine)) {
-    return res.status(400).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Invalid cuisine preference' });
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'Invalid cuisine preference' });
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'OpenAI API key not configured' });
+    return res.status(500).json({ aiMessage: '', recipe: '', error: 'OpenAI API key not configured' });
   }
 
   try {
@@ -183,7 +177,6 @@ export default async function handler(
       return res.status(response.status).json({ 
         aiMessage: '', 
         recipe: '',
-        youtubeQuery: '',
         error: `OpenAI API error: ${response.status}` 
       });
     }
@@ -192,33 +185,23 @@ export default async function handler(
     let aiMessage = data.choices?.[0]?.message?.content?.trim();
 
     if (!aiMessage) {
-      return res.status(500).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'No suggestion received from OpenAI' });
+      return res.status(500).json({ aiMessage: '', recipe: '', error: 'No suggestion received from OpenAI' });
     }
 
     // Extract recipe name from bolded text
     const recipeMatch = aiMessage.match(/\*\*(.+?)\*\*/);
     const recipe = recipeMatch ? recipeMatch[1] : '';
 
-    // Generate YouTube search query
-    const youtubeQuery = `${recipe} recipe how to make`;
-
     // Inject emojis for suggestion mode only
     if (mode === 'suggestion') {
       aiMessage = injectEmojis(aiMessage);
     }
 
-    // For now, return without YouTube video (we'll implement this later)
     res.status(200).json({ 
       aiMessage, 
-      recipe, 
-      youtubeQuery,
-      youtubeVideo: {
-        title: `${recipe} Recipe`,
-        videoId: 'dQw4w9WgXcQ', // Placeholder
-        url: `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
-      }
+      recipe
     });
   } catch {
-    res.status(500).json({ aiMessage: '', recipe: '', youtubeQuery: '', error: 'Failed to get AI suggestion' });
+    res.status(500).json({ aiMessage: '', recipe: '', error: 'Failed to get AI suggestion' });
   }
 } 

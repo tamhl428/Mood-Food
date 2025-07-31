@@ -18,22 +18,18 @@ function renderMarkdown(message: string) {
 async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<{
   aiMessage: string;
   recipe: string;
-  youtubeQuery: string;
-  youtubeVideo?: {
-    title: string;
-    videoId: string;
-    url: string;
-  };
 }> {
   const response = await fetch('/api/recipe-suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userMessage: userMsg, spicy, cuisine, mode }),
   });
-  if (!response.ok) throw new Error('Failed to get recipe suggestion');
-  const data = await response.json();
-  if (data.error) throw new Error(data.error);
-  return data;
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: Prefs; triggerInitialMessage?: boolean }) {
@@ -41,11 +37,6 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<string | null>(null);
-  const [youtubeVideo, setYoutubeVideo] = useState<{
-    title: string;
-    videoId: string;
-    url: string;
-  } | null>(null);
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -87,12 +78,10 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion');
       setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
       setRecipe(data.recipe);
-      setYoutubeVideo(data.youtubeVideo || null);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setMessages(msgs => [...msgs, { sender: 'ai', text: `Sorry, I couldn't process that. ${errorMessage}` }]);
       setRecipe(null);
-      setYoutubeVideo(null);
     } finally {
       setLoading(false);
     }
@@ -158,29 +147,22 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600, fontSize: 18 }}>{recipe}</div>
-              {youtubeVideo && (
-                <div style={{ marginTop: 8 }}>
-                  <div style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>
-                    {youtubeVideo.title}
-                  </div>
-                  <button
-                    onClick={handleGetRecipes}
-                    style={{
-                      display: 'inline-block',
-                      padding: '6px 16px',
-                      borderRadius: 4,
-                      background: '#ff0000',
-                      color: '#fff',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: 14,
-                      fontWeight: 500
-                    }}
-                  >
-                    Get Recipes 🎥
-                  </button>
-                </div>
-              )}
+              <button
+                onClick={handleGetRecipes}
+                style={{
+                  display: 'inline-block',
+                  padding: '6px 16px',
+                  borderRadius: 4,
+                  background: '#ff0000',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 500
+                }}
+              >
+                Get Recipes 🎥
+              </button>
             </div>
           </div>
         </div>
