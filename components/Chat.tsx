@@ -111,6 +111,19 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
 
   return (
     <div style={{ marginTop: 24 }}>
+      {/* Debug Session ID */}
+      <div style={{ 
+        fontSize: '12px', 
+        color: '#666', 
+        marginBottom: '8px',
+        padding: '4px 8px',
+        background: '#f0f0f0',
+        borderRadius: '4px',
+        fontFamily: 'monospace'
+      }}>
+        Session ID: {sessionId}
+      </div>
+      
       <div style={{
         border: '1px solid #ccc', borderRadius: 8, minHeight: 200, maxHeight: 320,
         overflowY: 'auto', padding: 12, background: '#fafafa', marginBottom: 12

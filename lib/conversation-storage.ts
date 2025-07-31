@@ -72,6 +72,7 @@ export class ConversationStorage {
       let conversation = await this.getConversation(sessionId);
       
       if (!conversation) {
+        console.log(`🆕 Creating new conversation for session: ${sessionId}`);
         conversation = {
           sessionId,
           messages: [],
@@ -79,6 +80,8 @@ export class ConversationStorage {
           createdAt: Date.now(),
           updatedAt: Date.now()
         };
+      } else {
+        console.log(`📝 Adding message to existing conversation: ${sessionId} (${conversation.messages.length + 1} messages)`);
       }
       
       conversation.messages.push(message);
@@ -90,8 +93,9 @@ export class ConversationStorage {
       }
       
       await this.saveConversation(conversation);
+      console.log(`✅ Stored conversation with ${conversation.messages.length} messages for session: ${sessionId}`);
     } catch (error) {
-      console.error('Error adding message:', error);
+      console.error('❌ Error adding message:', error);
     }
   }
 
@@ -99,11 +103,16 @@ export class ConversationStorage {
     try {
       await this.initialize();
       const conversation = await this.getConversation(sessionId);
-      if (!conversation) return [];
+      if (!conversation) {
+        console.log(`📭 No conversation found for session: ${sessionId}`);
+        return [];
+      }
       
-      return conversation.messages.slice(-limit);
+      const messages = conversation.messages.slice(-limit);
+      console.log(`📖 Retrieved ${messages.length} recent messages for session: ${sessionId}`);
+      return messages;
     } catch (error) {
-      console.error('Error getting recent messages:', error);
+      console.error('❌ Error getting recent messages:', error);
       return [];
     }
   }
