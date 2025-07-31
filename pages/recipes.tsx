@@ -51,25 +51,17 @@ export default function RecipesPage() {
   const [cuisineFilter, setCuisineFilter] = useState<string>('');
   const [sessionId, setSessionId] = useState<string>('');
 
-  // Get preferences and session ID from localStorage
+  // Get session ID from localStorage and fetch recipes immediately
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedPrefs = localStorage.getItem('moodzera_prefs');
-      if (storedPrefs) {
-        try {
-          const prefs = JSON.parse(storedPrefs);
-          setMoodFilter(prefs.feeling || '');
-          setCuisineFilter(prefs.cuisine || '');
-        } catch (e) {
-          console.error('Error parsing stored preferences:', e);
-        }
-      }
-      
       // Get the most recent session ID from localStorage
       const recentSessionId = localStorage.getItem('moodzera_recent_session');
       if (recentSessionId) {
         setSessionId(recentSessionId);
       }
+      
+      // Don't set filters from survey - let the API handle filtering based on conversation
+      // The recipes should come from the current conversation session
     }
   }, []);
 
@@ -196,25 +188,31 @@ export default function RecipesPage() {
           </div>
         ) : recipes.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 mb-4">
-              {sessionId ? 
-                "No recipes found in your recent conversation. Try chatting with the AI first to get recipe suggestions!" :
-                "No recipes found for your current filters."
-              }
+            <div className="text-gray-600 mb-6">
+              <div className="text-4xl mb-4">🍽️</div>
+              <div className="text-lg font-medium mb-2">No recipes found yet</div>
+              <div className="text-sm">
+                {sessionId ? 
+                  "Start chatting with the AI to get personalized recipe suggestions!" :
+                  "No recipes found for your current filters."
+                }
+              </div>
             </div>
             <div className="space-x-4">
               <button
-                onClick={clearFilters}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Clear Filters
-              </button>
-              <button
                 onClick={() => router.push('/')}
-                className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-semibold"
               >
                 Start Chat
               </button>
+              {moodFilter || cuisineFilter ? (
+                <button
+                  onClick={clearFilters}
+                  className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 font-semibold"
+                >
+                  Clear Filters
+                </button>
+              ) : null}
             </div>
           </div>
         ) : (
@@ -222,45 +220,50 @@ export default function RecipesPage() {
             {recipes.map((recipe, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                {/* Recipe Image Placeholder */}
-                <div className="bg-gradient-to-br from-gray-200 to-gray-300 h-48 w-full rounded-xl mb-4 flex items-center justify-center">
-                  <span className="text-4xl">🍽️</span>
-                </div>
-                
-                {/* Recipe Info */}
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">{recipe.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">{recipe.description}</p>
-                  
-                  {/* Recipe Details */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Difficulty:</span>
-                      <span className="flex items-center">
-                        {renderDifficulty(recipe.difficulty)}
-                        <span className="ml-2 text-gray-700">{recipe.difficulty}</span>
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Time:</span>
-                      <span className="text-gray-700">{recipe.time}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Cuisine:</span>
-                      <span className="text-gray-700">{recipe.cuisine}</span>
-                    </div>
+                {/* Recipe Image Placeholder with Category Badge */}
+                <div className="relative bg-gradient-to-br from-blue-100 to-indigo-200 h-48 w-full flex items-center justify-center">
+                  <span className="text-6xl">🍽️</span>
+                  {/* Category Badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white">
+                      {recipe.cuisine.toUpperCase()}
+                    </span>
                   </div>
                 </div>
                 
-                {/* Recipe Button */}
-                <button
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
-                >
-                  <span>📋</span>
-                  <span>View Recipe Details</span>
-                </button>
+                {/* Recipe Content */}
+                <div className="p-6 flex-1 flex flex-col">
+                  {/* Recipe Title */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">{recipe.name}</h3>
+                  
+                  {/* Recipe Description */}
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-1">{recipe.description}</p>
+                  
+                  {/* Recipe Details Grid */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">DIFFICULTY</div>
+                      <div className="flex items-center justify-center">
+                        {renderDifficulty(recipe.difficulty)}
+                        <span className="ml-1 text-xs text-gray-700">{recipe.difficulty}</span>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">TIME</div>
+                      <div className="text-sm font-medium text-gray-700">{recipe.time}</div>
+                    </div>
+                  </div>
+                  
+                  {/* Recipe Button */}
+                  <button
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+                  >
+                    <span>📋</span>
+                    <span>View Recipe Details</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
