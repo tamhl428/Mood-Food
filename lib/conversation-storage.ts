@@ -50,7 +50,11 @@ export class ConversationStorage {
     }
   }
 
-  async addMessage(sessionId: string, message: Message, preferences?: any): Promise<void> {
+  async addMessage(sessionId: string, message: Message, preferences?: {
+    spicy: string;
+    cuisine: string;
+    feeling: string;
+  }): Promise<void> {
     try {
       let conversation = await this.getConversation(sessionId);
       
@@ -90,7 +94,11 @@ export class ConversationStorage {
     }
   }
 
-  async updatePreferences(sessionId: string, preferences: any): Promise<void> {
+  async updatePreferences(sessionId: string, preferences: {
+    spicy?: string;
+    cuisine?: string;
+    feeling?: string;
+  }): Promise<void> {
     try {
       const conversation = await this.getConversation(sessionId);
       if (conversation) {

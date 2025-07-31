@@ -83,7 +83,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
           setLoading(false);
         });
     }
-  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine]);
+  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine, sessionId]);
 
   // User sends a message, get AI suggestion, extract recipe, and update chat
   const sendMessage = async (e: React.FormEvent) => {
