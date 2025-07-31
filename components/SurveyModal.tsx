@@ -4,7 +4,6 @@ export interface Prefs {
   feeling: string;
   cuisine: string;
   diet: string;
-  adventurousness: string;
   spicy: string;
 }
 
@@ -16,19 +15,21 @@ interface SurveyModalProps {
 }
 
 const feelingOptions = [
-  { value: 'happy', label: 'Happy 😊', description: 'Feeling joyful and upbeat' },
-  { value: 'sad', label: 'Sad 😢', description: 'Feeling down or melancholic' },
-  { value: 'stressed', label: 'Stressed 😰', description: 'Feeling overwhelmed or anxious' },
-  { value: 'excited', label: 'Excited 🎉', description: 'Feeling energetic and enthusiastic' },
-  { value: 'romantic', label: 'Romantic 💕', description: 'Feeling loving and intimate' },
-  { value: 'nostalgic', label: 'Nostalgic 🕰️', description: 'Feeling sentimental or reminiscent' },
-  { value: 'adventurous', label: 'Adventurous 🗺️', description: 'Feeling bold and ready to try new things' },
-  { value: 'comfortable', label: 'Comfortable 😌', description: 'Feeling relaxed and at ease' },
-  { value: 'energetic', label: 'Energetic ⚡', description: 'Feeling full of life and vigor' },
-  { value: 'cozy', label: 'Cozy 🧸', description: 'Feeling warm and snug' },
+  { value: '', label: 'Select your mood...' },
+  { value: 'happy', label: 'Happy 😊' },
+  { value: 'sad', label: 'Sad 😢' },
+  { value: 'stressed', label: 'Stressed 😰' },
+  { value: 'excited', label: 'Excited 🎉' },
+  { value: 'romantic', label: 'Romantic 💕' },
+  { value: 'nostalgic', label: 'Nostalgic 🕰️' },
+  { value: 'adventurous', label: 'Adventurous 🗺️' },
+  { value: 'comfortable', label: 'Comfortable 😌' },
+  { value: 'energetic', label: 'Energetic ⚡' },
+  { value: 'cozy', label: 'Cozy 🧸' },
 ];
 
 const cuisineOptions = [
+  { value: '', label: 'Select cuisine preference...' },
   { value: 'Italian', label: 'Italian 🍝' },
   { value: 'Chinese', label: 'Chinese 🥢' },
   { value: 'Indian', label: 'Indian 🍛' },
@@ -45,6 +46,7 @@ const cuisineOptions = [
 ];
 
 const dietOptions = [
+  { value: '', label: 'Select dietary restrictions...' },
   { value: 'None', label: 'No restrictions' },
   { value: 'Vegetarian', label: 'Vegetarian 🌱' },
   { value: 'Vegan', label: 'Vegan 🥬' },
@@ -54,15 +56,8 @@ const dietOptions = [
   { value: 'Paleo', label: 'Paleo 🥑' },
 ];
 
-const adventurousnessOptions = [
-  { value: 'Very conservative', label: 'Very conservative 😊', description: 'Stick to familiar favorites' },
-  { value: 'Somewhat conservative', label: 'Somewhat conservative 🙂', description: 'Slight variations on classics' },
-  { value: 'Moderate', label: 'Moderate 🤔', description: 'Mix of familiar and new' },
-  { value: 'Somewhat adventurous', label: 'Somewhat adventurous 😎', description: 'Try new cuisines and dishes' },
-  { value: 'Very adventurous', label: 'Very adventurous 🚀', description: 'Bring on the exotic and unusual' },
-];
-
 const spicyOptions = [
+  { value: '', label: 'Select spice preference...' },
   { value: 'Spicy', label: 'Spicy 🔥' },
   { value: 'Mild', label: 'Mild 😊' },
   { value: 'No preference', label: 'No preference 🤷' },
@@ -78,14 +73,13 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
       feeling: String(currentPrefs.feeling || '').substring(0, 50),
       cuisine: String(currentPrefs.cuisine || '').substring(0, 50),
       diet: String(currentPrefs.diet || '').substring(0, 30),
-      adventurousness: String(currentPrefs.adventurousness || '').substring(0, 50),
       spicy: String(currentPrefs.spicy || '').substring(0, 20),
     };
     onSave(sanitizedPrefs);
   };
 
   const handleNext = () => {
-    if (step < 6) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       handleSave();
@@ -122,7 +116,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           </div>
           <div className="mb-6">
             <div className="flex space-x-3">
-              {[1, 2, 3, 4, 5].map((stepNum) => (
+              {[1, 2, 3, 4].map((stepNum) => (
                 <div
                   key={stepNum}
                   className={`h-3 flex-1 rounded-full transition-all duration-300 ${
@@ -136,7 +130,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
               ))}
             </div>
             <div className="mt-2 text-sm text-gray-500">
-              Step {step} of 5
+              Step {step} of 4
             </div>
           </div>
         </div>
@@ -146,107 +140,68 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
           {step === 1 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">What&apos;s your mood today?</h3>
-              <div className="space-y-4">
+              <select
+                value={currentPrefs.feeling}
+                onChange={(e) => updatePrefs('feeling', e.target.value)}
+                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
+              >
                 {feelingOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('feeling', option.value)}
-                    className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.feeling === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-xl font-medium">{option.label}</div>
-                    <div className="text-sm text-gray-600 mt-2">{option.description}</div>
-                  </button>
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           )}
 
           {step === 2 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">What cuisine do you prefer?</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <select
+                value={currentPrefs.cuisine}
+                onChange={(e) => updatePrefs('cuisine', e.target.value)}
+                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
+              >
                 {cuisineOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('cuisine', option.value)}
-                    className={`p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.cuisine === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-lg font-medium">{option.label}</div>
-                  </button>
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           )}
 
           {step === 3 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Any dietary restrictions?</h3>
-              <div className="space-y-4">
+              <select
+                value={currentPrefs.diet}
+                onChange={(e) => updatePrefs('diet', e.target.value)}
+                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
+              >
                 {dietOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('diet', option.value)}
-                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.diet === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-lg font-medium">{option.label}</div>
-                  </button>
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           )}
 
           {step === 4 && (
             <div className="animate-fade-in">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">How adventurous are you with food?</h3>
-              <div className="space-y-4">
-                {adventurousnessOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('adventurousness', option.value)}
-                    className={`w-full p-6 rounded-2xl border-2 text-left transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.adventurousness === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-lg font-medium">{option.label}</div>
-                    <div className="text-sm text-gray-600 mt-2">{option.description}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">How spicy do you like your food?</h3>
-              <div className="space-y-4">
+              <select
+                value={currentPrefs.spicy}
+                onChange={(e) => updatePrefs('spicy', e.target.value)}
+                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
+              >
                 {spicyOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => updatePrefs('spicy', option.value)}
-                    className={`w-full p-6 rounded-2xl border-2 text-center transition-all duration-300 transform hover:scale-105 ${
-                      currentPrefs.spicy === option.value
-                        ? 'border-blue-500 bg-blue-50 shadow-lg'
-                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                    }`}
-                  >
-                    <div className="text-lg font-medium">{option.label}</div>
-                  </button>
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
           )}
         </div>
@@ -269,12 +224,11 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                 (step === 1 && !currentPrefs.feeling) ||
                 (step === 2 && !currentPrefs.cuisine) ||
                 (step === 3 && !currentPrefs.diet) ||
-                (step === 4 && !currentPrefs.adventurousness) ||
-                (step === 5 && !currentPrefs.spicy)
+                (step === 4 && !currentPrefs.spicy)
               }
               className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              {step === 5 ? 'Get Recipes 🍽️' : 'Next →'}
+              {step === 4 ? 'Get Recipes 🍽️' : 'Next →'}
             </button>
           </div>
         </div>
