@@ -97,32 +97,6 @@ export default async function handler(
       index === self.findIndex(r => r.name === recipe.name)
     );
     
-    // If no recipes found, provide some default suggestions
-    if (uniqueRecipes.length === 0) {
-      uniqueRecipes.push(
-        {
-          name: "Chicken Noodle Soup",
-          description: "A comforting bowl of homemade chicken noodle soup perfect for when you're feeling under the weather or need some warmth.",
-          mood: mood as string || "comfort",
-          cuisine: cuisine as string || "American",
-          difficulty: "Easy",
-          time: "45 minutes",
-          sessionId: "default",
-          timestamp: Date.now()
-        },
-        {
-          name: "Spicy Pad Thai",
-          description: "A vibrant and flavorful Thai dish that's perfect for when you're feeling adventurous and want something exciting.",
-          mood: mood as string || "excited",
-          cuisine: cuisine as string || "Thai",
-          difficulty: "Medium",
-          time: "30 minutes",
-          sessionId: "default",
-          timestamp: Date.now()
-        }
-      );
-    }
-    
     res.status(200).json({ 
       recipes: uniqueRecipes,
       total: uniqueRecipes.length,

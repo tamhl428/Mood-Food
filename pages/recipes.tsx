@@ -129,8 +129,8 @@ export default function RecipesPage() {
                 <Image
                   src="/logo.svg"
                   alt="MOODZERA Logo"
-                  width={120}
-                  height={48}
+                  width={240}
+                  height={96}
                 />
                 <h1 className="text-2xl font-bold text-gray-800">Recipe Suggestions</h1>
               </div>

@@ -116,8 +116,8 @@ export default function LandingPage() {
               <Image
                 src="/logo.svg"
                 alt="MOODZERA Logo"
-                width={200}
-                height={80}
+                width={400}
+                height={160}
               />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">MOODZERA Chat</h1>
