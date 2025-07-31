@@ -46,7 +46,7 @@ function injectEmojis(text: string): string {
   }).join(' ');
 }
 
-function buildSystemPrompt(spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion') {
+function buildSystemPrompt(spicy: string, cuisine: string, diet: string, mode: 'initial' | 'suggestion' = 'suggestion') {
   if (mode === 'initial') {
     // Build preference context for initial mode
     let preferenceContext = '';
@@ -55,6 +55,9 @@ function buildSystemPrompt(spicy: string, cuisine: string, mode: 'initial' | 'su
     }
     if (spicy && spicy !== 'No preference') {
       preferenceContext += `\nThe user prefers ${spicy.toLowerCase()} food.`;
+    }
+    if (diet && diet !== '' && diet !== 'None') {
+      preferenceContext += `\nThe user has dietary restrictions: ${diet}. Always suggest recipes that are compatible with this diet.`;
     }
     
     return `You are a warm, empathetic recipe concierge who helps users find the perfect recipe based on their mood. Your responses should be:
@@ -84,6 +87,11 @@ Avoid responses that don't make logical sense or are grammatically incorrect.`;
     cuisineLine = `\nThe user prefers ${cuisine} cuisine. Focus on suggesting ${cuisine} recipes or recipes that are commonly found in ${cuisine} cooking.`;
   }
 
+  let dietLine = '';
+  if (diet && diet !== '' && diet !== 'None') {
+    dietLine = `\nThe user has dietary restrictions: ${diet}. Always suggest recipes that are compatible with this diet.`;
+  }
+
   return `
 You are MoodRecipeBot — a warm, empathetic assistant that helps users choose recipes based on their current emotional state.
 
@@ -97,8 +105,9 @@ You are MoodRecipeBot — a warm, empathetic assistant that helps users choose r
 **Recipe Suggestion Format:**
 After your empathetic response, suggest **exactly one popular dish/recipe**, clearly bolded in Markdown, with no extra commentary. This should be a well-known, popular dish that people commonly search for recipes online.
 
-**Important:** Always respect the user's cuisine preference. If they prefer a specific cuisine, suggest a dish from that cuisine or similar styles.
+**Important:** Always respect the user's cuisine preference and dietary restrictions. If they prefer a specific cuisine, suggest a dish from that cuisine or similar styles.
 ${cuisineLine}
+${dietLine}
 ${spicyLine}
 
 Example format:
@@ -138,7 +147,7 @@ export default async function handler(
     return res.status(429).json({ aiMessage: '', recipe: '', error: 'Too many requests. Please try again later.' });
   }
 
-  const { userMessage, spicy, cuisine, mode = 'suggestion', sessionId } = req.body;
+  const { userMessage, spicy, cuisine, diet, mode = 'suggestion', sessionId } = req.body;
 
   // Input validation and sanitization
   if (!userMessage || typeof userMessage !== 'string') {
@@ -188,12 +197,12 @@ export default async function handler(
       timestamp: Date.now()
     };
     
-    await conversationStorage.addMessage(sessionId, userMessageObj, { feeling: '', spicy, cuisine, adventurousness: '' });
+    await conversationStorage.addMessage(sessionId, userMessageObj, { feeling: '', spicy, cuisine, diet, adventurousness: '' });
 
     // Get conversation history for context
     const recentMessages = await conversationStorage.getRecentMessages(sessionId, 8);
     
-    const systemPrompt = buildSystemPrompt(spicy || 'No preference', cuisine || '', mode);
+    const systemPrompt = buildSystemPrompt(spicy || 'No preference', cuisine || '', diet || '', mode);
     
     // Build messages array for OpenAI with conversation context
     const messages = [

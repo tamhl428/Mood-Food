@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
 import Image from 'next/image';
+import { trackEvent } from '../lib/posthog-helper';
 
 const defaultPrefs: Prefs = {
   feeling: '',
@@ -38,6 +39,11 @@ export default function LandingPage() {
 
   const handleGetStarted = () => {
     console.log('Get Started clicked, setting modalOpen to true');
+    // Test PostHog event to verify it's working
+    trackEvent('get_started_clicked', {
+      page: 'landing',
+      timestamp: new Date().toISOString()
+    });
     setModalOpen(true);
   };
 

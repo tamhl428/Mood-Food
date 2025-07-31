@@ -13,6 +13,7 @@ export interface Conversation {
     feeling: string;
     spicy: string;
     cuisine: string;
+    diet: string;
     adventurousness: string;
   };
   createdAt: number;
@@ -67,6 +68,7 @@ export class ConversationStorage {
     feeling: string;
     spicy: string;
     cuisine: string;
+    diet: string;
     adventurousness: string;
   }): Promise<void> {
     try {
@@ -78,7 +80,7 @@ export class ConversationStorage {
         conversation = {
           sessionId,
           messages: [],
-          preferences: preferences || { feeling: '', spicy: '', cuisine: '', adventurousness: '' },
+          preferences: preferences || { feeling: '', spicy: '', cuisine: '', diet: '', adventurousness: '' },
           createdAt: Date.now(),
           updatedAt: Date.now()
         };
@@ -123,6 +125,7 @@ export class ConversationStorage {
     feeling?: string;
     spicy?: string;
     cuisine?: string;
+    diet?: string;
     adventurousness?: string;
   }): Promise<void> {
     try {

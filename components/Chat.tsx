@@ -20,7 +20,7 @@ function renderMarkdown(message: string) {
 }
 
 // Fetch a recipe suggestion from OpenAI via our secure API route
-async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion', sessionId: string): Promise<{
+async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, diet: string, mode: 'initial' | 'suggestion' = 'suggestion', sessionId: string): Promise<{
   aiMessage: string;
   recipe: string;
 }> {
@@ -31,6 +31,7 @@ async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: st
       userMessage: userMsg, 
       spicy, 
       cuisine, 
+      diet,
       mode,
       sessionId 
     }),
@@ -80,14 +81,17 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       setHasTriggeredInitial(true);
       setLoading(true);
       
-      // Build initial message including cuisine preference if available
+      // Build initial message including cuisine and diet preferences if available
       let initialMessage = `I'm feeling ${prefs.feeling} today.`;
       if (prefs.cuisine && prefs.cuisine !== '') {
         initialMessage += ` I prefer ${prefs.cuisine} cuisine.`;
       }
+      if (prefs.diet && prefs.diet !== '' && prefs.diet !== 'None') {
+        initialMessage += ` I am ${prefs.diet}.`;
+      }
       setMessages([{ sender: 'user', text: initialMessage }]);
       
-      fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
+      fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, prefs.diet, 'initial', sessionId)
         .then(data => {
           setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
           // Set the recipe from the initial message as well
@@ -106,7 +110,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
           setLoading(false);
         });
     }
-  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine, sessionId]);
+  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine, prefs.diet, sessionId]);
 
   // User sends a message, get AI suggestion, extract recipe, and update chat
   const sendMessage = async (e: React.FormEvent) => {
@@ -115,7 +119,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     setMessages(msgs => [...msgs, { sender: 'user', text: input }]);
     setLoading(true);
     try {
-      const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion', sessionId);
+      const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, prefs.diet, 'suggestion', sessionId);
       setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
       // Only update recipe if a valid recipe is returned
       if (data.recipe && data.recipe.trim()) {
