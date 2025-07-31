@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 export interface Prefs {
-  feeling: string;
   cuisine: string;
   diet: string;
+  adventurousness: string;
   spicy: string;
 }
 
@@ -13,20 +13,6 @@ interface SurveyModalProps {
   onSave: (prefs: Prefs) => void;
   onClose: () => void;
 }
-
-const feelingOptions = [
-  { value: '', label: 'Select your mood...' },
-  { value: 'happy', label: 'Happy 😊' },
-  { value: 'sad', label: 'Sad 😢' },
-  { value: 'stressed', label: 'Stressed 😰' },
-  { value: 'excited', label: 'Excited 🎉' },
-  { value: 'romantic', label: 'Romantic 💕' },
-  { value: 'nostalgic', label: 'Nostalgic 🕰️' },
-  { value: 'adventurous', label: 'Adventurous 🗺️' },
-  { value: 'comfortable', label: 'Comfortable 😌' },
-  { value: 'energetic', label: 'Energetic ⚡' },
-  { value: 'cozy', label: 'Cozy 🧸' },
-];
 
 const cuisineOptions = [
   { value: '', label: 'Select cuisine preference...' },
@@ -56,6 +42,15 @@ const dietOptions = [
   { value: 'Paleo', label: 'Paleo 🥑' },
 ];
 
+const adventurousnessOptions = [
+  { value: '', label: 'Select your adventurousness level...' },
+  { value: 'Very conservative', label: 'Very conservative 😊' },
+  { value: 'Somewhat conservative', label: 'Somewhat conservative 🙂' },
+  { value: 'Moderate', label: 'Moderate 🤔' },
+  { value: 'Somewhat adventurous', label: 'Somewhat adventurous 😎' },
+  { value: 'Very adventurous', label: 'Very adventurous 🚀' },
+];
+
 const spicyOptions = [
   { value: '', label: 'Select spice preference...' },
   { value: 'Spicy', label: 'Spicy 🔥' },
@@ -70,9 +65,9 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
   const handleSave = () => {
     // Sanitize data before saving
     const sanitizedPrefs = {
-      feeling: String(currentPrefs.feeling || '').substring(0, 50),
       cuisine: String(currentPrefs.cuisine || '').substring(0, 50),
       diet: String(currentPrefs.diet || '').substring(0, 30),
+      adventurousness: String(currentPrefs.adventurousness || '').substring(0, 50),
       spicy: String(currentPrefs.spicy || '').substring(0, 20),
     };
     onSave(sanitizedPrefs);
@@ -104,7 +99,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
         {/* Header */}
         <div className="p-8 border-b border-gray-100">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-800">How are you feeling?</h2>
+            <h2 className="text-3xl font-bold text-gray-800">What are your food preferences?</h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
@@ -139,23 +134,6 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
         <div className="p-8">
           {step === 1 && (
             <div className="animate-fade-in">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">What&apos;s your mood today?</h3>
-              <select
-                value={currentPrefs.feeling}
-                onChange={(e) => updatePrefs('feeling', e.target.value)}
-                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
-              >
-                {feelingOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">What cuisine do you prefer?</h3>
               <select
                 value={currentPrefs.cuisine}
@@ -171,7 +149,7 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="animate-fade-in">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Any dietary restrictions?</h3>
               <select
@@ -180,6 +158,23 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
                 className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
               >
                 {dietOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="animate-fade-in">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">How adventurous are you with food?</h3>
+              <select
+                value={currentPrefs.adventurousness}
+                onChange={(e) => updatePrefs('adventurousness', e.target.value)}
+                className="w-full p-4 border-2 border-gray-200 rounded-xl text-lg focus:border-blue-500 focus:outline-none transition-all duration-300"
+              >
+                {adventurousnessOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -221,9 +216,9 @@ export default function SurveyModal({ open, prefs, onSave, onClose }: SurveyModa
             <button
               onClick={handleNext}
               disabled={
-                (step === 1 && !currentPrefs.feeling) ||
-                (step === 2 && !currentPrefs.cuisine) ||
-                (step === 3 && !currentPrefs.diet) ||
+                (step === 1 && !currentPrefs.cuisine) ||
+                (step === 2 && !currentPrefs.diet) ||
+                (step === 3 && !currentPrefs.adventurousness) ||
                 (step === 4 && !currentPrefs.spicy)
               }
               className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 shadow-lg"

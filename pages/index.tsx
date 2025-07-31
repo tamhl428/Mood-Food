@@ -4,9 +4,9 @@ import Chat from '../components/Chat';
 import Image from 'next/image';
 
 const defaultPrefs: Prefs = {
-  feeling: '',
   cuisine: '',
   diet: '',
+  adventurousness: '',
   spicy: '',
 };
 
@@ -22,9 +22,9 @@ export default function LandingPage() {
     if (typeof window !== 'undefined') {
       // Sanitize data before storing
       const sanitizedPrefs = {
-        feeling: String(updated.feeling || '').substring(0, 50),
         cuisine: String(updated.cuisine || '').substring(0, 50),
         diet: String(updated.diet || '').substring(0, 30),
+        adventurousness: String(updated.adventurousness || '').substring(0, 50),
         spicy: String(updated.spicy || '').substring(0, 20),
       };
       localStorage.setItem('moodzera_prefs', JSON.stringify(sanitizedPrefs));

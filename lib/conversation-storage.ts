@@ -12,7 +12,7 @@ export interface Conversation {
   preferences: {
     spicy: string;
     cuisine: string;
-    feeling: string;
+    adventurousness: string;
   };
   createdAt: number;
   updatedAt: number;
@@ -65,7 +65,7 @@ export class ConversationStorage {
   async addMessage(sessionId: string, message: Message, preferences?: {
     spicy: string;
     cuisine: string;
-    feeling: string;
+    adventurousness: string;
   }): Promise<void> {
     try {
       await this.initialize();
@@ -76,7 +76,7 @@ export class ConversationStorage {
         conversation = {
           sessionId,
           messages: [],
-          preferences: preferences || { spicy: '', cuisine: '', feeling: '' },
+          preferences: preferences || { spicy: '', cuisine: '', adventurousness: '' },
           createdAt: Date.now(),
           updatedAt: Date.now()
         };
@@ -120,7 +120,7 @@ export class ConversationStorage {
   async updatePreferences(sessionId: string, preferences: {
     spicy?: string;
     cuisine?: string;
-    feeling?: string;
+    adventurousness?: string;
   }): Promise<void> {
     try {
       await this.initialize();

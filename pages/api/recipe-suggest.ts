@@ -178,7 +178,7 @@ export default async function handler(
       timestamp: Date.now()
     };
     
-    await conversationStorage.addMessage(sessionId, userMessageObj, { spicy, cuisine, feeling: '' });
+    await conversationStorage.addMessage(sessionId, userMessageObj, { spicy, cuisine, adventurousness: '' });
 
     // Get conversation history for context
     const recentMessages = await conversationStorage.getRecentMessages(sessionId, 8);
