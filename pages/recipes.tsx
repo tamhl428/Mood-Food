@@ -10,35 +10,9 @@ interface Recipe {
   cuisine: string;
   difficulty: string;
   time: string;
+  sessionId?: string;
+  timestamp?: number;
 }
-
-// Mock recipe data - in a real app, this would come from the API
-const mockRecipes: Recipe[] = [
-  {
-    name: "Chicken Noodle Soup",
-    description: "A comforting bowl of homemade chicken noodle soup perfect for when you're feeling under the weather or need some warmth.",
-    mood: "sad",
-    cuisine: "American",
-    difficulty: "Easy",
-    time: "45 minutes"
-  },
-  {
-    name: "Spicy Pad Thai",
-    description: "A vibrant and flavorful Thai dish that's perfect for when you're feeling adventurous and want something exciting.",
-    mood: "excited",
-    cuisine: "Thai",
-    difficulty: "Medium",
-    time: "30 minutes"
-  },
-  {
-    name: "Chocolate Chip Cookies",
-    description: "Warm, gooey chocolate chip cookies that bring comfort and joy - perfect for any mood!",
-    mood: "comfortable",
-    cuisine: "American",
-    difficulty: "Easy",
-    time: "25 minutes"
-  }
-];
 
 // Helper to render stars for difficulty
 function renderDifficulty(difficulty: string) {
@@ -72,11 +46,12 @@ function SkeletonCard() {
 export default function RecipesPage() {
   const router = useRouter();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [moodFilter, setMoodFilter] = useState<string>('');
   const [cuisineFilter, setCuisineFilter] = useState<string>('');
+  const [sessionId, setSessionId] = useState<string>('');
 
-  // Get preferences from localStorage (set by survey)
+  // Get preferences and session ID from localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedPrefs = localStorage.getItem('moodzera_prefs');
@@ -89,32 +64,52 @@ export default function RecipesPage() {
           console.error('Error parsing stored preferences:', e);
         }
       }
+      
+      // Get the most recent session ID from localStorage
+      const recentSessionId = localStorage.getItem('moodzera_recent_session');
+      if (recentSessionId) {
+        setSessionId(recentSessionId);
+      }
     }
   }, []);
 
-  // Load recipes based on filters
-  useEffect(() => {
+  // Fetch recipes from API
+  const fetchRecipes = async () => {
     setLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      let filteredRecipes = mockRecipes;
+    try {
+      const params = new URLSearchParams();
+      if (moodFilter) params.append('mood', moodFilter);
+      if (cuisineFilter) params.append('cuisine', cuisineFilter);
+      if (sessionId) params.append('sessionId', sessionId);
       
-      if (moodFilter) {
-        filteredRecipes = filteredRecipes.filter(r => r.mood === moodFilter);
+      const response = await fetch(`/api/get-recipes?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes');
       }
       
-      if (cuisineFilter) {
-        filteredRecipes = filteredRecipes.filter(r => r.cuisine === cuisineFilter);
-      }
-      
-      setRecipes(filteredRecipes);
+      const data = await response.json();
+      setRecipes(data.recipes || []);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      // Fallback to empty array
+      setRecipes([]);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, [moodFilter, cuisineFilter]);
+    }
+  };
+
+  // Load recipes when filters change
+  useEffect(() => {
+    fetchRecipes();
+  }, [moodFilter, cuisineFilter, sessionId]);
 
   const clearFilters = () => {
     setMoodFilter('');
     setCuisineFilter('');
+  };
+
+  const refreshRecipes = () => {
+    fetchRecipes();
   };
 
   return (
@@ -140,6 +135,12 @@ export default function RecipesPage() {
                 <h1 className="text-2xl font-bold text-gray-800">Recipe Suggestions</h1>
               </div>
             </div>
+            <button
+              onClick={refreshRecipes}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              🔄 Refresh
+            </button>
           </div>
         </div>
       </div>
@@ -195,13 +196,26 @@ export default function RecipesPage() {
           </div>
         ) : recipes.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-600 mb-4">No recipes found for your current filters.</div>
-            <button
-              onClick={clearFilters}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              Clear Filters
-            </button>
+            <div className="text-gray-600 mb-4">
+              {sessionId ? 
+                "No recipes found in your recent conversation. Try chatting with the AI first to get recipe suggestions!" :
+                "No recipes found for your current filters."
+              }
+            </div>
+            <div className="space-x-4">
+              <button
+                onClick={clearFilters}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Clear Filters
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+              >
+                Start Chat
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

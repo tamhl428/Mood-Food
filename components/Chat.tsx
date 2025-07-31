@@ -58,6 +58,13 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     setSessionId(generateSessionId());
   }, []);
 
+  // Store session ID in localStorage when it changes
+  useEffect(() => {
+    if (sessionId && typeof window !== 'undefined') {
+      localStorage.setItem('moodzera_recent_session', sessionId);
+    }
+  }, [sessionId]);
+
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, recipe]);
