@@ -71,11 +71,11 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
 
   // Trigger initial AI message when survey is submitted - Fixed TypeScript issues
   useEffect(() => {
-    if (triggerInitialMessage && !hasTriggeredInitial && prefs.cuisine) {
+    if (triggerInitialMessage && !hasTriggeredInitial && prefs.feeling) {
       setHasTriggeredInitial(true);
       setLoading(true);
       
-      const initialMessage = `I'm in the mood for ${prefs.cuisine} cuisine.`;
+      const initialMessage = `I'm feeling ${prefs.feeling} today.`;
       setMessages([{ sender: 'user', text: initialMessage }]);
       
       fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
@@ -90,7 +90,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
           setLoading(false);
         });
     }
-  }, [triggerInitialMessage, hasTriggeredInitial, prefs.cuisine, prefs.spicy, sessionId]);
+  }, [triggerInitialMessage, hasTriggeredInitial, prefs.feeling, prefs.spicy, prefs.cuisine, sessionId]);
 
   // User sends a message, get AI suggestion, extract recipe, and update chat
   const sendMessage = async (e: React.FormEvent) => {

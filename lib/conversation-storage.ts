@@ -10,6 +10,7 @@ export interface Conversation {
   sessionId: string;
   messages: Message[];
   preferences: {
+    feeling: string;
     spicy: string;
     cuisine: string;
     adventurousness: string;
@@ -63,6 +64,7 @@ export class ConversationStorage {
   }
 
   async addMessage(sessionId: string, message: Message, preferences?: {
+    feeling: string;
     spicy: string;
     cuisine: string;
     adventurousness: string;
@@ -76,7 +78,7 @@ export class ConversationStorage {
         conversation = {
           sessionId,
           messages: [],
-          preferences: preferences || { spicy: '', cuisine: '', adventurousness: '' },
+          preferences: preferences || { feeling: '', spicy: '', cuisine: '', adventurousness: '' },
           createdAt: Date.now(),
           updatedAt: Date.now()
         };
@@ -118,6 +120,7 @@ export class ConversationStorage {
   }
 
   async updatePreferences(sessionId: string, preferences: {
+    feeling?: string;
     spicy?: string;
     cuisine?: string;
     adventurousness?: string;

@@ -39,7 +39,7 @@ export default async function handler(
               recipes.push({
                 name: recipeName,
                 description: `Suggested based on your mood and preferences. ${message.content.replace(/\*\*(.+?)\*\*/g, '').trim()}`,
-                mood: 'various', // Since we removed feeling, use a default
+                mood: conversation.preferences.feeling || 'various',
                 cuisine: conversation.preferences.cuisine || 'Various',
                 difficulty: 'Medium', // Default difficulty
                 time: '30-45 minutes', // Default time
@@ -66,7 +66,7 @@ export default async function handler(
                 recipes.push({
                   name: recipeName,
                   description: `Suggested based on your mood and preferences. ${message.content.replace(/\*\*(.+?)\*\*/g, '').trim()}`,
-                  mood: 'various', // Since we removed feeling, use a default
+                  mood: conversation.preferences.feeling || 'various',
                   cuisine: conversation.preferences.cuisine || 'Various',
                   difficulty: 'Medium',
                   time: '30-45 minutes',
