@@ -48,6 +48,11 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<string | null>(null);
+  
+  // Debug recipe state changes
+  useEffect(() => {
+    console.log('Recipe state changed:', recipe);
+  }, [recipe]);
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const [sessionId, setSessionId] = useState<string>(generateSessionId());
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -81,6 +86,13 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
         .then(data => {
           setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
+          // Set the recipe from the initial message as well
+          if (data.recipe) {
+            console.log('Setting initial recipe to:', data.recipe);
+            setRecipe(data.recipe);
+          } else {
+            console.log('No recipe in initial message');
+          }
         })
         .catch(err => {
           const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -101,7 +113,13 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     try {
       const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion', sessionId);
       setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
-      setRecipe(data.recipe);
+      // Only update recipe if a valid recipe is returned
+      if (data.recipe && data.recipe.trim()) {
+        console.log('Setting recipe to:', data.recipe);
+        setRecipe(data.recipe);
+      } else {
+        console.log('No valid recipe returned, keeping current recipe');
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
       setMessages(msgs => [...msgs, { sender: 'ai', text: `Sorry, I couldn't process that. ${errorMessage}` }]);
@@ -267,7 +285,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
                 </button>
                 
                 <button
-                  onClick={() => setRecipe('')}
+                  onClick={() => setRecipe(null)}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',

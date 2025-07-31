@@ -233,6 +233,10 @@ export default async function handler(
     // Extract recipe name from bolded text
     const recipeMatch = aiMessage.match(/\*\*(.+?)\*\*/);
     const recipe = recipeMatch ? recipeMatch[1] : '';
+    
+    // Debug recipe extraction
+    console.log('AI Message:', aiMessage);
+    console.log('Recipe extracted:', recipe);
 
     // Inject emojis for suggestion mode only
     if (mode === 'suggestion') {
