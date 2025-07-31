@@ -69,7 +69,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, recipe]);
 
-  // Trigger initial AI message when survey is submitted
+  // Trigger initial AI message when survey is submitted - Fixed TypeScript issues
   useEffect(() => {
     if (triggerInitialMessage && !hasTriggeredInitial && prefs.cuisine) {
       setHasTriggeredInitial(true);
