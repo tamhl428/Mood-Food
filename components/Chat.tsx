@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Prefs } from './SurveyModal';
-import { useRouter } from 'next/router';
+import RecipeModal from './RecipeModal';
 
 // Generate a unique session ID
 function generateSessionId(): string {
@@ -49,6 +49,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<string | null>(null);
+  const [showRecipeModal, setShowRecipeModal] = useState(false);
   
   // Debug recipe state changes
   useEffect(() => {
@@ -57,7 +58,6 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
   const [sessionId, setSessionId] = useState<string>(generateSessionId());
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   // Generate session ID on component mount
   useEffect(() => {
@@ -139,7 +139,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   };
 
   const handleGetRecipes = () => {
-    router.push('/recipes');
+    setShowRecipeModal(true);
   };
 
   return (
@@ -326,6 +326,15 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
           </div>
         </div>
       )}
+      
+      {/* Recipe Modal */}
+      <RecipeModal
+        isOpen={showRecipeModal}
+        onClose={() => setShowRecipeModal(false)}
+        recipeName={recipe || 'Recipe'}
+        mood={prefs.feeling || 'Happy'}
+        cuisine={prefs.cuisine || 'International'}
+      />
       
       <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
         <input
