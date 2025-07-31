@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { conversationStorage, Message } from '../../lib/conversation-storage';
 
 // Validate required environment variables
 if (!process.env.OPENAI_API_KEY) {
@@ -127,11 +128,15 @@ export default async function handler(
     return res.status(429).json({ aiMessage: '', recipe: '', error: 'Too many requests. Please try again later.' });
   }
 
-  const { userMessage, spicy, cuisine, mode = 'suggestion' } = req.body;
+  const { userMessage, spicy, cuisine, mode = 'suggestion', sessionId } = req.body;
 
   // Input validation and sanitization
   if (!userMessage || typeof userMessage !== 'string') {
     return res.status(400).json({ aiMessage: '', recipe: '', error: 'User message is required' });
+  }
+
+  if (!sessionId || typeof sessionId !== 'string') {
+    return res.status(400).json({ aiMessage: '', recipe: '', error: 'Session ID is required' });
   }
 
   // Sanitize user input - remove potentially dangerous characters
@@ -166,7 +171,27 @@ export default async function handler(
   }
 
   try {
+    // Store user message
+    const userMessageObj: Message = {
+      role: 'user',
+      content: sanitizedUserMessage,
+      timestamp: Date.now()
+    };
+    
+    await conversationStorage.addMessage(sessionId, userMessageObj, { spicy, cuisine });
+
+    // Get conversation history for context
+    const recentMessages = await conversationStorage.getRecentMessages(sessionId, 8);
+    
     const systemPrompt = buildSystemPrompt(spicy || 'No preference', cuisine || '', mode);
+    
+    // Build messages array for OpenAI with conversation context
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      ...recentMessages.map(msg => ({ role: msg.role, content: msg.content })),
+      { role: 'user', content: sanitizedUserMessage }
+    ];
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -175,10 +200,7 @@ export default async function handler(
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: sanitizedUserMessage }
-        ],
+        messages,
         max_tokens: mode === 'initial' ? 100 : 180,
         temperature: 0.8,
       }),
@@ -199,6 +221,15 @@ export default async function handler(
       return res.status(500).json({ aiMessage: '', recipe: '', error: 'No suggestion received from OpenAI' });
     }
 
+    // Store AI response
+    const aiMessageObj: Message = {
+      role: 'assistant',
+      content: aiMessage,
+      timestamp: Date.now()
+    };
+    
+    await conversationStorage.addMessage(sessionId, aiMessageObj);
+
     // Extract recipe name from bolded text
     const recipeMatch = aiMessage.match(/\*\*(.+?)\*\*/);
     const recipe = recipeMatch ? recipeMatch[1] : '';
@@ -212,7 +243,8 @@ export default async function handler(
       aiMessage, 
       recipe
     });
-  } catch {
+  } catch (error) {
+    console.error('API Error:', error);
     res.status(500).json({ aiMessage: '', recipe: '', error: 'Failed to get AI suggestion' });
   }
 } 

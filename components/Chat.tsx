@@ -2,6 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Prefs } from './SurveyModal';
 import { useRouter } from 'next/router';
 
+// Generate a unique session ID
+function generateSessionId(): string {
+  return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
 // Render Markdown bold (**text**) as <strong>
 function renderMarkdown(message: string) {
   // Only handle bold for now
@@ -15,14 +20,20 @@ function renderMarkdown(message: string) {
 }
 
 // Fetch a recipe suggestion from OpenAI via our secure API route
-async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion'): Promise<{
+async function fetchRecipeSuggestion(userMsg: string, spicy: string, cuisine: string, mode: 'initial' | 'suggestion' = 'suggestion', sessionId: string): Promise<{
   aiMessage: string;
   recipe: string;
 }> {
   const response = await fetch('/api/recipe-suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userMessage: userMsg, spicy, cuisine, mode }),
+    body: JSON.stringify({ 
+      userMessage: userMsg, 
+      spicy, 
+      cuisine, 
+      mode,
+      sessionId 
+    }),
   });
 
   if (!response.ok) {
@@ -38,8 +49,14 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<string | null>(null);
   const [hasTriggeredInitial, setHasTriggeredInitial] = useState(false);
+  const [sessionId, setSessionId] = useState<string>(generateSessionId());
   const chatEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Generate session ID on component mount
+  useEffect(() => {
+    setSessionId(generateSessionId());
+  }, []);
 
   useEffect(() => {
     if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -54,7 +71,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
       const initialMessage = `I'm feeling ${prefs.feeling} today.`;
       setMessages([{ sender: 'user', text: initialMessage }]);
       
-      fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial')
+      fetchRecipeSuggestion(initialMessage, prefs.spicy, prefs.cuisine, 'initial', sessionId)
         .then(data => {
           setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
         })
@@ -75,7 +92,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     setMessages(msgs => [...msgs, { sender: 'user', text: input }]);
     setLoading(true);
     try {
-      const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion');
+      const data = await fetchRecipeSuggestion(input, prefs.spicy, prefs.cuisine, 'suggestion', sessionId);
       setMessages(msgs => [...msgs, { sender: 'ai', text: data.aiMessage }]);
       setRecipe(data.recipe);
     } catch (err) {
