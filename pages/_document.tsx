@@ -11,8 +11,7 @@ export default function Document() {
         <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         <meta httpEquiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()" />
         
-        {/* Content Security Policy */}
-        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.openai.com;" />
+        {/* Removed restrictive CSP that was blocking JavaScript */}
       </Head>
       <body className="antialiased">
         <Main />

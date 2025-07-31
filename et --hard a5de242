@@ -1,0 +1,10 @@
+[33m379c20d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix PostHog SSR issues - move initialization to client-side only
+[33m19deed7[m Fix security vulnerability in @eslint/plugin-kit
+[33m04c6b59[m Build verification - all TypeScript and lint errors resolved
+[33m97614b0[m Fix TypeScript compilation errors and duplicate function definitions
+[33me95e544[m Fix lint errors and TypeScript issues for Vercel deployment
+[33mafbb8c8[m Add PostHog analytics integration to Moodzera app
+[33ma5de242[m Fix recipes loading and redesign cards - immediate loading and modern card design
+[33m06474f1[m Fix recipes page - show recipes immediately and improve card design like Blue Apron
+[33m27f9175[m Fix AI not recognizing survey preferences - include cuisine in initial message and update system prompt
+[33m1c83ff1[m Fix recipe card visibility issue - prevent disappearing after initial display
