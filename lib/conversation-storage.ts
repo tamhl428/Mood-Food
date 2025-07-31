@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { createClient, RedisClientType } from 'redis';
 
 export interface Message {
   role: 'user' | 'assistant';
@@ -20,6 +20,7 @@ export interface Conversation {
 
 export class ConversationStorage {
   private static instance: ConversationStorage;
+  private redis: RedisClientType | null = null;
   
   private constructor() {}
   
@@ -30,10 +31,21 @@ export class ConversationStorage {
     return ConversationStorage.instance;
   }
 
+  async initialize() {
+    if (!this.redis) {
+      this.redis = createClient({
+        url: process.env.REDIS_URL
+      });
+      await this.redis.connect();
+    }
+  }
+
   async getConversation(sessionId: string): Promise<Conversation | null> {
     try {
-      const conversation = await kv.get<Conversation>(`conversation:${sessionId}`);
-      return conversation;
+      await this.initialize();
+      if (!this.redis) return null;
+      const conversation = await this.redis.get(`conversation:${sessionId}`);
+      return conversation ? JSON.parse(conversation) : null;
     } catch (error) {
       console.error('Error getting conversation:', error);
       return null;
@@ -42,9 +54,9 @@ export class ConversationStorage {
 
   async saveConversation(conversation: Conversation): Promise<void> {
     try {
-      await kv.set(`conversation:${conversation.sessionId}`, conversation, {
-        ex: 60 * 60 * 24 * 7 // Expire after 7 days
-      });
+      await this.initialize();
+      if (!this.redis) return;
+      await this.redis.setEx(`conversation:${conversation.sessionId}`, 60 * 60 * 24 * 7, JSON.stringify(conversation)); // Expire after 7 days
     } catch (error) {
       console.error('Error saving conversation:', error);
     }
@@ -56,6 +68,7 @@ export class ConversationStorage {
     feeling: string;
   }): Promise<void> {
     try {
+      await this.initialize();
       let conversation = await this.getConversation(sessionId);
       
       if (!conversation) {
@@ -84,6 +97,7 @@ export class ConversationStorage {
 
   async getRecentMessages(sessionId: string, limit: number = 10): Promise<Message[]> {
     try {
+      await this.initialize();
       const conversation = await this.getConversation(sessionId);
       if (!conversation) return [];
       
@@ -100,6 +114,7 @@ export class ConversationStorage {
     feeling?: string;
   }): Promise<void> {
     try {
+      await this.initialize();
       const conversation = await this.getConversation(sessionId);
       if (conversation) {
         conversation.preferences = { ...conversation.preferences, ...preferences };
@@ -113,9 +128,17 @@ export class ConversationStorage {
 
   async deleteConversation(sessionId: string): Promise<void> {
     try {
-      await kv.del(`conversation:${sessionId}`);
+      await this.initialize();
+      if (!this.redis) return;
+      await this.redis.del(`conversation:${sessionId}`);
     } catch (error) {
       console.error('Error deleting conversation:', error);
+    }
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.redis) {
+      await this.redis.disconnect();
     }
   }
 }
