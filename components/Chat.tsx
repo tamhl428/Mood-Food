@@ -56,8 +56,8 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   
   // Authentication and presets
-  const { user, loading: authLoading } = useAuth();
-  const { presets, loading: presetsLoading, savePreset, updatePreset, deletePreset, loadPreset } = usePresets(user?.id || null);
+  const { user } = useAuth();
+  const { presets, loading: presetsLoading, savePreset, updatePreset, deletePreset } = usePresets(user?.id || null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPresetsPanel, setShowPresetsPanel] = useState(false);
   const [savingPreset, setSavingPreset] = useState(false);
@@ -214,7 +214,7 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   };
 
   // Handle loading preset
-  const handleLoadPreset = (preset: any) => {
+  const handleLoadPreset = (preset: { recipe_title: string; full_recipe_content: string }) => {
     setRecipe(preset.full_recipe_content);
     setShowPresetsPanel(false);
     

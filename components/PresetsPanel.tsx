@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Preset } from '../lib/supabase';
 
 interface PresetsPanelProps {
@@ -23,6 +23,18 @@ export default function PresetsPanel({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleEdit = (preset: Preset) => {
     setEditingId(preset.id);
@@ -89,17 +101,14 @@ export default function PresetsPanel({
           position: 'fixed',
           top: 0,
           right: isOpen ? 0 : '-100%',
-          width: '50%',
+          width: isMobile ? '100%' : '50%',
           height: '100vh',
           background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
           boxShadow: '-10px 0 30px rgba(0, 0, 0, 0.1)',
           zIndex: 1000,
           transition: 'right 0.3s ease-in-out',
           display: 'flex',
-          flexDirection: 'column',
-          '@media (max-width: 768px)': {
-            width: '100%'
-          }
+          flexDirection: 'column'
         }}
       >
         {/* Header */}

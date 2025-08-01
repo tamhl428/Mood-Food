@@ -81,7 +81,10 @@ export function usePresets(userId: string | null) {
     one_line_description?: string;
   }) => {
     // Input validation and sanitization
-    const sanitizedUpdates: any = {};
+    const sanitizedUpdates: {
+      recipe_title?: string;
+      one_line_description?: string;
+    } = {};
     
     if (updates.recipe_title !== undefined) {
       const sanitizedTitle = String(updates.recipe_title || '').trim().substring(0, 200);

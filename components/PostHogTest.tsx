@@ -70,8 +70,8 @@ export default function PostHogTest() {
 
       <div className="mt-4 p-3 bg-yellow-100 rounded">
         <p className="text-sm text-yellow-800">
-          <strong>Debug Info:</strong> Check your browser's developer console for PostHog debug messages.
-          If PostHog is working, you should see "PostHog initialized successfully" in the console.
+          <strong>Debug Info:</strong> Check your browser&apos;s developer console for PostHog debug messages.
+          If PostHog is working, you should see &quot;PostHog initialized successfully&quot; in the console.
         </p>
       </div>
     </div>
