@@ -3,6 +3,7 @@ import SurveyModal, { Prefs } from '../components/SurveyModal';
 import Chat from '../components/Chat';
 import Image from 'next/image';
 import { trackEvent } from '../lib/posthog-helper';
+import PostHogTest from '../components/PostHogTest';
 
 const defaultPrefs: Prefs = {
   feeling: '',
@@ -253,6 +254,13 @@ export default function LandingPage() {
             >
               Start Now
             </button>
+          </div>
+        </section>
+
+        {/* PostHog Test Section - Remove this after testing */}
+        <section className="py-8 bg-gray-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <PostHogTest />
           </div>
         </section>
 

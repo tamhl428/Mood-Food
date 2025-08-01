@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Prefs } from './SurveyModal';
 import RecipeModal from './RecipeModal';
+import { useAuth } from '../hooks/useAuth';
+import { usePresets } from '../hooks/usePresets';
+import LoginModal from './LoginModal';
+import PresetsPanel from './PresetsPanel';
 
 // Generate a unique session ID
 function generateSessionId(): string {
@@ -50,6 +54,13 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState<string | null>(null);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
+  
+  // Authentication and presets
+  const { user, loading: authLoading } = useAuth();
+  const { presets, loading: presetsLoading, savePreset, updatePreset, deletePreset, loadPreset } = usePresets(user?.id || null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showPresetsPanel, setShowPresetsPanel] = useState(false);
+  const [savingPreset, setSavingPreset] = useState(false);
   
   // Debug recipe state changes
   useEffect(() => {
@@ -142,6 +153,78 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
     setShowRecipeModal(true);
   };
 
+  // Handle saving preset
+  const handleSavePreset = async () => {
+    if (!recipe) return;
+    
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+
+    setSavingPreset(true);
+    try {
+      const oneLineDescription = `${prefs.feeling} mood • ${prefs.cuisine} cuisine`;
+      await savePreset({
+        recipe_title: recipe,
+        one_line_description: oneLineDescription,
+        full_recipe_content: recipe // For now, using recipe as full content
+      });
+      
+             // Show success toast
+       const toast = document.createElement('div');
+       toast.style.cssText = `
+         position: fixed;
+         top: 20px;
+         right: 20px;
+         background: #10b981;
+         color: white;
+         padding: 12px 20px;
+         border-radius: 8px;
+         font-size: 14px;
+         font-weight: 500;
+         z-index: 10000;
+         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+         animation: slideIn 0.3s ease;
+       `;
+       toast.textContent = '✅ Recipe saved to presets!';
+       
+       // Add animation styles
+       const style = document.createElement('style');
+       style.textContent = `
+         @keyframes slideIn {
+           from { transform: translateX(100%); opacity: 0; }
+           to { transform: translateX(0); opacity: 1; }
+         }
+       `;
+       document.head.appendChild(style);
+       document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 3000);
+    } catch (error) {
+      console.error('Error saving preset:', error);
+      alert('Failed to save preset. Please try again.');
+    } finally {
+      setSavingPreset(false);
+    }
+  };
+
+  // Handle loading preset
+  const handleLoadPreset = (preset: any) => {
+    setRecipe(preset.full_recipe_content);
+    setShowPresetsPanel(false);
+    
+    // Add a message to the chat showing the loaded preset
+    setMessages(prev => [...prev, { 
+      sender: 'ai', 
+      text: `I've loaded your saved recipe: **${preset.recipe_title}**\n\n${preset.full_recipe_content}` 
+    }]);
+  };
+
   return (
     <div style={{ marginTop: 24 }}>
       {/* Debug Session ID */}
@@ -155,6 +238,42 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
         fontFamily: 'monospace'
       }}>
         Session ID: {sessionId}
+      </div>
+
+      {/* Presets Button */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: '12px'
+      }}>
+        <button
+          onClick={() => setShowPresetsPanel(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <span>📝</span>
+          <span>Presets ({presets.length})</span>
+        </button>
       </div>
       
       <div style={{
@@ -259,69 +378,105 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
                 Perfectly crafted recipe suggestion based on your preferences and mood.
               </div>
               
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: 12 }}>
-                <button
-                  onClick={handleGetRecipes}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '12px 24px',
-                    borderRadius: 12,
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: 15,
-                    fontWeight: 600,
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                    transition: 'all 0.3s ease',
-                    minWidth: 140
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-                  }}
-                >
-                  <span>📋</span>
-                  <span>View Recipe</span>
-                </button>
-                
-                <button
-                  onClick={() => setRecipe(null)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '12px 24px',
-                    borderRadius: 12,
-                    background: 'transparent',
-                    color: '#6b7280',
-                    border: '2px solid #e5e7eb',
-                    cursor: 'pointer',
-                    fontSize: 15,
-                    fontWeight: 500,
-                    transition: 'all 0.3s ease',
-                    minWidth: 120
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = '#d1d5db';
-                    e.currentTarget.style.color = '#374151';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = '#e5e7eb';
-                    e.currentTarget.style.color = '#6b7280';
-                  }}
-                >
-                  <span>✕</span>
-                  <span>Dismiss</span>
-                </button>
-              </div>
+                             {/* Action Buttons */}
+               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                 <button
+                   onClick={handleGetRecipes}
+                   style={{
+                     display: 'inline-flex',
+                     alignItems: 'center',
+                     gap: 8,
+                     padding: '12px 24px',
+                     borderRadius: 12,
+                     background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                     color: '#fff',
+                     border: 'none',
+                     cursor: 'pointer',
+                     fontSize: 15,
+                     fontWeight: 600,
+                     boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                     transition: 'all 0.3s ease',
+                     minWidth: 140
+                   }}
+                   onMouseOver={(e) => {
+                     e.currentTarget.style.transform = 'translateY(-2px)';
+                     e.currentTarget.style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.4)';
+                   }}
+                   onMouseOut={(e) => {
+                     e.currentTarget.style.transform = 'translateY(0)';
+                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                   }}
+                 >
+                   <span>📋</span>
+                   <span>View Recipe</span>
+                 </button>
+                 
+                 {/* Save Button - positioned in lower-left corner as specified */}
+                 <button
+                   onClick={handleSavePreset}
+                   disabled={savingPreset}
+                   style={{
+                     display: 'inline-flex',
+                     alignItems: 'center',
+                     gap: 8,
+                     padding: '12px 24px',
+                     borderRadius: 12,
+                     background: user ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+                     color: '#fff',
+                     border: 'none',
+                     cursor: user ? 'pointer' : 'pointer',
+                     fontSize: 15,
+                     fontWeight: 600,
+                     boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                     transition: 'all 0.3s ease',
+                     minWidth: 140,
+                     opacity: savingPreset ? 0.7 : 1
+                   }}
+                   onMouseOver={(e) => {
+                     if (!savingPreset) {
+                       e.currentTarget.style.transform = 'translateY(-2px)';
+                       e.currentTarget.style.boxShadow = '0 8px 20px rgba(16, 185, 129, 0.4)';
+                     }
+                   }}
+                   onMouseOut={(e) => {
+                     e.currentTarget.style.transform = 'translateY(0)';
+                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.3)';
+                   }}
+                 >
+                   <span>{savingPreset ? '⏳' : '💾'}</span>
+                   <span>{savingPreset ? 'Saving...' : (user ? 'Save as Preset' : 'Sign in to Save')}</span>
+                 </button>
+                 
+                 <button
+                   onClick={() => setRecipe(null)}
+                   style={{
+                     display: 'inline-flex',
+                     alignItems: 'center',
+                     gap: 8,
+                     padding: '12px 24px',
+                     borderRadius: 12,
+                     background: 'transparent',
+                     color: '#6b7280',
+                     border: '2px solid #e5e7eb',
+                     cursor: 'pointer',
+                     fontSize: 15,
+                     fontWeight: 500,
+                     transition: 'all 0.3s ease',
+                     minWidth: 120
+                   }}
+                   onMouseOver={(e) => {
+                     e.currentTarget.style.borderColor = '#d1d5db';
+                     e.currentTarget.style.color = '#374151';
+                   }}
+                   onMouseOut={(e) => {
+                     e.currentTarget.style.borderColor = '#e5e7eb';
+                     e.currentTarget.style.color = '#6b7280';
+                   }}
+                 >
+                   <span>✕</span>
+                   <span>Dismiss</span>
+                 </button>
+               </div>
             </div>
           </div>
         </div>
@@ -336,19 +491,42 @@ export default function Chat({ prefs, triggerInitialMessage = false }: { prefs: 
         cuisine={prefs.cuisine || 'International'}
       />
       
-      <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Type your message..."
-          style={{ flex: 1, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading || !input.trim()} style={{ padding: '8px 16px', borderRadius: 4 }}>
-          Send
-        </button>
-      </form>
-    </div>
-  );
-} 
+             <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
+         <input
+           type="text"
+           value={input}
+           onChange={e => setInput(e.target.value)}
+           placeholder="Type your message..."
+           style={{ flex: 1, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+           disabled={loading}
+         />
+         <button type="submit" disabled={loading || !input.trim()} style={{ padding: '8px 16px', borderRadius: 4 }}>
+           Send
+         </button>
+       </form>
+
+       {/* Modals and Panels */}
+       <LoginModal
+         isOpen={showLoginModal}
+         onClose={() => setShowLoginModal(false)}
+         onSuccess={() => {
+           setShowLoginModal(false);
+           // Auto-save the preset after successful login
+           if (recipe) {
+             handleSavePreset();
+           }
+         }}
+       />
+
+       <PresetsPanel
+         isOpen={showPresetsPanel}
+         onClose={() => setShowPresetsPanel(false)}
+         presets={presets}
+         loading={presetsLoading}
+         onLoadPreset={handleLoadPreset}
+         onUpdatePreset={updatePreset}
+         onDeletePreset={deletePreset}
+       />
+     </div>
+   );
+ } 
